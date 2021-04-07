@@ -1,5 +1,9 @@
+/**
+ * 此文件用于测试打包
+ */
+
 import _ from "lodash";
-import "./style.css";
+import "./styles/style.css";
 
 export function square(x) {
   return x * x;
@@ -21,7 +25,7 @@ function component() {
   element.innerHTML = _.join(["Hello", "webpack"], " ");
   element.classList.add("hello");
 
-  btn.innerHTML = "点击这里，然后查看 console!";
+  btn.innerHTML = "点击这里，然后查看 console!..";
   btn.onclick = printMe;
 
   element.appendChild(btn);
