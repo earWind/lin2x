@@ -169,7 +169,7 @@ module: {
 }
 ```
 
-## 安装 vue-router
+## vue-router
 
 ```js
 // 安装
@@ -183,7 +183,7 @@ Vue.use(Router);
 // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/router
 ```
 
-## 安装 vuex
+## vuex
 
 ```js
 // 安装
@@ -195,6 +195,18 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 // 相关配置可以参考
 // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/store
+```
+
+## element-ui
+
+```js
+// 安装
+yarn add element-ui
+// 在main.js中添加
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI);
 ```
 
 # 管理输出

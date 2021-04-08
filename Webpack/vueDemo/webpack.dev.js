@@ -18,6 +18,7 @@ module.exports = merge(common, {
     contentBase: "./dist",
     // 启用模块热替换
     hot: true,
+    port: 8081
   },
   // 配置插件
   plugins: [
