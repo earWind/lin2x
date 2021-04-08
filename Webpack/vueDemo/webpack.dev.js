@@ -18,7 +18,12 @@ module.exports = merge(common, {
     contentBase: "./dist",
     // 启用模块热替换
     hot: true,
-    port: 8081
+    // 端口
+    port: 8081,
+    // 自动打开浏览器
+    open: false,
+    // gzip 压缩
+    compress: true, 
   },
   // 配置插件
   plugins: [

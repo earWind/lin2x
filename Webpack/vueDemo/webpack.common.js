@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 /**
  * 1.自动在内存中根据指定页面生成一个内存页面
  * 2.自动把打包好的bundel.js追加到页面中
@@ -20,12 +21,12 @@ module.exports = {
     // [name] 据入口起点定义的名称(entry的key)，动态生成
     // [hash] 将根据资源内容创建出唯一 hash
     filename: "[name].[hash].js",
-    // 输出路径
+    // 输出路径 __dirname 目录的绝对路径
     path: path.resolve(__dirname, "dist"),
     // 外部访问静态资源文件的路径
-    // publicPath: "./",
+    publicPath: "/",
   },
-  // 优化(最佳化)
+  // 优化
   optimization: {
     // 代码分离（将公共的依赖模块提取到已有的 entry chunk 中，或者提取到一个新生成的 chunk），防止重复
     splitChunks: {
@@ -47,25 +48,40 @@ module.exports = {
     // 配置 loader 将其他语言编译成js能够识别的
     rules: [
       {
+        // 匹配文件
         test: /\.css$/,
+        // use 数组中loader执行顺序：从右到左，从上到下依次执行
         use: [
-          "style-loader",
           "vue-style-loader",
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              // 开启 CSS Modules
+              modules: false,
+              // 自定义生成的类名
+              // localIdentName: "[local]_[hash:base64:8]",
+            },
+          },
           "postcss-loader",
+          "less-loader",
         ],
       },
       {
         test: /\.less$/,
-        use: ["vue-style-loader", "css-loader", "less-loader"],
+        use: [
+          "vue-style-loader",
+          "css-loader",
+          // 将less文件编译成css文件
+          "less-loader"
+        ],
       },
       {
         test: /\.vue$/,
         use: ["vue-loader"],
       },
       {
-        test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.js$/,
+        exclude: (file) => /node_modules/.test(file) && !/\.vue\.js/.test(file),
         use: {
           loader: "babel-loader",
           options: {
@@ -74,12 +90,32 @@ module.exports = {
         },
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: ["file-loader"],
+        test: /\.(png|jpg|svg|jpeg|gif)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              // 低于这个limit就直接转成base64插入到style里，不然以name的方式命名存放
+              // 这里的单位时bit
+              // 优点：减小请求次数(减轻服务器压力)
+              // 缺点：图片体积会更大(下载速度慢)
+              limit: 6 * 1024,
+              name: "static/images/[hash:8].[name].[ext]",
+            },
+          },
+        ],
       },
       {
+        // 字体图标啥的，跟图片分处理方式一样
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: ["file-loader"],
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              name: "static/font/[hash:8].[name].[ext]",
+            },
+          },
+        ],
       },
     ],
   },
@@ -97,5 +133,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     // vue loader
     new VueLoaderPlugin(),
+    // 提取公共代码
+    new webpack.optimize.SplitChunksPlugin(),
   ],
 };
