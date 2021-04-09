@@ -10,3 +10,7 @@ export const animals = () => {
     },
   ];
 };
+
+export const add = (a, b) => {
+  return a + b;
+};

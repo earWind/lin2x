@@ -2,10 +2,10 @@
   "name": "vue-webpack-demo",
   "author": "lin2x",
   "description": "learning webpack",
-  "sideEffects": false,
   "scripts": {
     "dev": "webpack serve --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
+    "build:pro": "webpack --config webpack.prod.js",
     "watch": "webpack --watch"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@
 本篇幅用于练习用 webpack 搭建 vue 开发环境，主要从以下几点入手
 
 1. webpack 的安装
-2. 跟着[官网文档](https://v4.webpack.docschina.org/loaders/)搭建一个 webpack 管理的项目，了解几个重要概念：
+2. 跟着[官网文档](https://webpack.docschina.org/)搭建一个 webpack 管理的项目，了解几个重要概念：
 
 - 入口(entry)
 - 输出(output)
@@ -311,18 +311,29 @@ plugins: [
 
 # tree shaking
 
-> 移除 JavaScript 上下文中的未引用代码(dead-code)
+> 移除 JavaScript 上下文中的未引用代码(dead-code)  
 
 ```js
-// 将文件标记为 side-effect-free(无副作用)
+// 在 webpack.dev.js 中添加
+// 在development环境打包 可以输出没有压缩过的代码；production环境打包会压缩代码
+optimization: {
+  // 告知 webpack 去决定每个模块使用的导出内容
+  usedExports: true
+}
+
 // 在 package.json 中添加
 {
+  "name": "your-project",
+  /**
+   * 将文件标记为 side-effect-free(无副作用)
+   * sideEffects值为false 表明所有文件都没有副作用 可以尽情的把没用到的代码删除
+   * sideEffects值也可以是数组，["*.css"] - 如果在项目中使用类似 css-loader 并 import 一个 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除 
+  */
   "sideEffects": false
 }
 ```
 
-- 压缩输出结果
-  通过 import 和 export 语法，我们已经找出需要删除的“未引用代码(dead code)”，然而，不仅仅是要找出，还要在 bundle 中删除它们。
+虽然很有用的感觉，但是  [你的Tree-Shaking并没什么卵用](https://zhuanlan.zhihu.com/p/32831172)
 
 # 配置生产环境
 
@@ -369,7 +380,17 @@ optimization: {
   }
 }
 ```
-# 面试该怎么回答参考  
-[当面试官问 Webpack 的时候他想知道什么](https://juejin.cn/post/6943468761575849992#heading-0)  
-[「吐血整理」再来一打 Webpack 面试题](https://juejin.cn/post/6844904094281236487#heading-0)  
-[看完webpack官方文档你还是一窍不通，那你就是傻逼](https://webpack.docschina.org/concepts/entry-points/)
+# 总结
+
+一开始学习webpack的时候感觉好干燥，官网那么多东西都不晓得从哪里开始看。不过现在呢我有了个不错的思路：
+* 先跟着指南里的介绍从上往下配置一个简单的webpack，这时候你已经对配置有了大概的了解
+* 然后呢再看概念，起到承上启下的作用，里面有对参数深入的解释
+* 再然后就是配置结合loader和plugin一起学习
+* 最后如果你打算更深层次的学习请看API
+
+光会用还不够，你还得学会怎么把学到的东西表达出来：
+
+* [当面试官问 Webpack 的时候他想知道什么](https://juejin.cn/post/6943468761575849992#heading-0)  
+* [「吐血整理」再来一打 Webpack 面试题](https://juejin.cn/post/6844904094281236487#heading-0)  
+* [看完webpack官方文档你还是一窍不通，那你就是傻逼](https://webpack.docschina.org/concepts/entry-points/)
+* [[万字总结] 一文吃透 Webpack 核心原理](https://juejin.cn/post/6949040393165996040#heading-24)
