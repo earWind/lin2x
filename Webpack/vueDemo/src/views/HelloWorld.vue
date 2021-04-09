@@ -25,5 +25,6 @@ export default {
 <style>
 .red {
   color: red;
+  font-size: 20px;
 }
 </style>

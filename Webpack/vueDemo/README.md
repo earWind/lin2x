@@ -116,7 +116,7 @@ import "./style.css";
 ```
 
 ## vue-loader
-
+[Vue Loader官网](https://vue-loader.vuejs.org/zh/)
 ```js
 // 安装vue
 yarn add vue
@@ -145,7 +145,7 @@ yarn add babel-loader @babel/core @babel/preset-env --dev
 module: {
   rules: [
     {
-      test: /\.m?js$/,
+      test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
       use: {
         loader: "babel-loader",
