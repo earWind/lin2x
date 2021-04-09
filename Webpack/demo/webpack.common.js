@@ -1,6 +1,5 @@
 const path = require("path");
 const webpack = require("webpack");
-const ConsoleLogOnBuildWebpackPlugin = require("./plugins/ConsoleLogOnBuildWebpackPlugin");
 // 是否是生产环境
 const isProduction = process.env.NODE_ENV === "production";
 /**
@@ -14,12 +13,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = {
-  // 入口 指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始
-  // 进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。
+  // 入口文件(需要打包的文件)
   entry: {
     app: "./src/main.js",
   },
-  // 输出 告诉 webpack 在哪里输出它所创建的 bundle，以及如何命名这些文件。
+  // 输出打包后的文件(管理输出)
   output: {
     // 输出文件的文件名
     // [name] 据入口起点定义的名称(entry的key)，动态生成
@@ -39,7 +37,7 @@ module.exports = {
       chunks: "all",
     },
   },
-  // 模块解析 告诉 webpack 如何寻找模块对应的文件
+  // 配置webpack如何寻找模块对应的文件
   resolve: {
     // 别名
     alias: {
@@ -51,14 +49,12 @@ module.exports = {
   },
   // 模块，在 Webpack 里一切皆模块，一个模块对应着一个文件。Webpack 会从配置的 Entry 开始递归找出所有依赖的模块
   module: {
-    // webpack 只能理解 JavaScript 和 JSON 文件
-    // loader 可以将文件从不同的语言解析为 webpack能处理的语言
+    // 配置 loader 将其他语言编译成js能够识别的
     rules: [
       {
-        // 识别出哪些文件会被转换
+        // 匹配文件
         test: /\.css$/,
-        // 定义出在进行转换时，应该使用哪个 loader
-        // use 数组中loader执行顺序：从上到下依次执行
+        // use 数组中loader执行顺序：从右到左，从上到下依次执行
         use: [
           "vue-style-loader",
           { loader: "css-loader", options: { sourceMap: true } },
@@ -76,7 +72,64 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        use: ["vue-loader"],
+        use: [
+          {
+            loader: "vue-loader",
+            options: {
+              loaders: {
+                css: [
+                  // isProduction ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  // {
+                  //   loader: "postcss-loader",
+                  //   options: { sourceMap: !isProduction },
+                  // },
+                ],
+                postcss: [
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                ],
+                less: [
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "less-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                ],
+              },
+              cssSourceMap: !isProduction,
+              // If you have problems debugging vue-files in devtools,
+              // set this to false - it *may* help
+              // https://vue-loader.vuejs.org/en/options.html#cachebusting
+              cacheBusting: true,
+              transformToRequire: {
+                video: ["src", "poster"],
+                source: "src",
+                img: "src",
+                image: "xlink:href",
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.js$/,
@@ -118,7 +171,7 @@ module.exports = {
       },
     ],
   },
-  // 插件 插件目的在于解决 loader 无法实现的其他事：打包优化，资源管理，注入环境变量。
+  // 配置插件
   plugins: [
     new HtmlWebpackPlugin({
       // 生成html文件的标题
@@ -134,7 +187,5 @@ module.exports = {
     new VueLoaderPlugin(),
     // 提取公共代码
     new webpack.optimize.SplitChunksPlugin(),
-    // 自定义plugin
-    new ConsoleLogOnBuildWebpackPlugin()
   ],
 };

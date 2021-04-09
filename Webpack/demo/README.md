@@ -1,25 +1,12 @@
 # 前言
 
-本篇幅用于练习用 webpack 搭建 vue 开发环境，主要从以下几点入手
+本篇幅用于练习用 webpack4 搭建 vue 开发环境，主要从以下几点入手
 
 1. webpack 的安装
-2. 跟着[官网文档](https://v4.webpack.docschina.org/loaders/)搭建一个 webpack 管理的项目，了解几个重要概念：
-
-- 入口(entry)
-- 输出(output)
-- loader
-- 插件(plugin)
-- 模式(mode)
-- 浏览器兼容性(browser compatibility) , webpack 的 import() 和 require.ensure() 需要 Promise。如果你想要支持旧版本浏览器，在使用这些表达式之前，还需要 提前加载 polyfill。
-- 环境(environment)
-
-3. 安装 vue、vue-router、vuex、element-ui 。。
-4. 着手性能优化，提升打包构建速度，减小输出体积 。。
-5. 本文收录在[GitHub](https://github.com/earWind/llin2x/tree/main/Webpack/vueDemo#readme)上，有什么问题欢迎 Issues！！！
-
-# 概念
-
-本质上，webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工具。当 webpack 处理应用程序时，它会在内部构建一个 依赖图(dependency graph)，此依赖图对应映射到项目所需的每个模块，并生成一个或多个 bundle。
+2. 跟着[官网文档](https://v4.webpack.docschina.org/loaders/)搭建一个 webpack 管理的项目，了解几个重要概念：入口、输出、loader、plugin
+3. 安装 vue、vue-router、vuex、element-ui 等
+4. 着手性能优化，提升打包构建速度，减小输体积等
+5. 本文收录在[GitHub](https://github.com/earWind/llin2x/tree/main/Webpack/vueDemo#readme)有什么问题欢迎 Issues
 
 # 安装/起步
 
@@ -129,9 +116,7 @@ import "./style.css";
 ```
 
 ## vue-loader
-
-[Vue Loader 官网](https://vue-loader.vuejs.org/zh/)
-
+[Vue Loader官网](https://vue-loader.vuejs.org/zh/)
 ```js
 // 安装vue
 yarn add vue
@@ -369,7 +354,7 @@ optimization: {
   }
 }
 ```
-# 面试该怎么回答参考  
+
+面试该怎么回答参考  
 [当面试官问 Webpack 的时候他想知道什么](https://juejin.cn/post/6943468761575849992#heading-0)  
-[「吐血整理」再来一打 Webpack 面试题](https://juejin.cn/post/6844904094281236487#heading-0)  
-[看完webpack官方文档你还是一窍不通，那你就是傻逼](https://webpack.docschina.org/concepts/entry-points/)
+[「吐血整理」再来一打 Webpack 面试题](https://juejin.cn/post/6844904094281236487#heading-0)

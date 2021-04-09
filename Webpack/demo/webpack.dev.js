@@ -8,7 +8,7 @@ const common = require("./webpack.common.js");
 const webpack = require("webpack");
 
 module.exports = merge(common, {
-  // 模式 指定生产环境
+  // 指定生产环境
   mode: "development",
   // 为了更容易地追踪 error 和 warning在源代码中的原始位置
   devtool: "inline-source-map",
