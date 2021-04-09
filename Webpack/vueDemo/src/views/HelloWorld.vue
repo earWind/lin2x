@@ -3,7 +3,10 @@
     <el-header>Header</el-header>
     <el-container>
       <el-aside width="200px">Aside</el-aside>
-      <el-main class="red">Main</el-main>
+      <el-main class="red">
+        <el-button type="primary">主要按钮</el-button>
+        <span class="red">Main</span>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -19,7 +22,7 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style>
 .red {
   color: red;
 }

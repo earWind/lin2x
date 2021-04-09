@@ -1,4 +1,6 @@
 const path = require("path");
+// 是否是生产环境
+const isProduction = process.env.NODE_ENV === "production";
 /**
  * 1.自动在内存中根据指定页面生成一个内存页面
  * 2.自动把打包好的bundel.js追加到页面中
@@ -49,19 +51,80 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          "style-loader",
           "vue-style-loader",
-          "css-loader",
-          "postcss-loader",
+          { loader: "css-loader", options: { sourceMap: true } },
+          { loader: "postcss-loader", options: { sourceMap: true } },
         ],
       },
       {
         test: /\.less$/,
-        use: ["vue-style-loader", "css-loader", "less-loader"],
+        use: [
+          "vue-style-loader",
+          { loader: "css-loader", options: { sourceMap: true } },
+          { loader: "postcss-loader", options: { sourceMap: true } },
+          { loader: "less-loader", options: { sourceMap: true } },
+        ],
       },
       {
         test: /\.vue$/,
-        use: ["vue-loader"],
+        use: [
+          {
+            loader: "vue-loader",
+            options: {
+              loaders: {
+                css: [
+                  // isProduction ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                ],
+                postcss: [
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                ],
+                less: [
+                  "vue-style-loader",
+                  {
+                    loader: "css-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                  {
+                    loader: "less-loader",
+                    options: { sourceMap: !isProduction },
+                  },
+                ],
+              },
+              cssSourceMap: !isProduction,
+              // If you have problems debugging vue-files in devtools,
+              // set this to false - it *may* help
+              // https://vue-loader.vuejs.org/en/options.html#cachebusting
+              cacheBusting: true,
+              transformToRequire: {
+                video: ["src", "poster"],
+                source: "src",
+                img: "src",
+                image: "xlink:href",
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.m?js$/,
