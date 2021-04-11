@@ -1,0 +1,13 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "main": "dist/webpack-numbers.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "lodash": "^4.17.21",
+    "webpack": "^5.31.2"
+  }
+}

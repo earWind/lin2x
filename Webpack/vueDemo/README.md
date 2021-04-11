@@ -108,14 +108,14 @@ export default {
 </script>
 ```
 
-# 管理资源（配置 loader）
+# 管理资源 / loader
 
 ## style-loader css-loader
 
 ```js
-// 安装
+// yarn
 yarn add style-loader css-loader -dev
-// 在 webpack.config.js 文件中添加
+// webpack.config.js
 module: {
     rules: [
       {
@@ -128,15 +128,34 @@ module: {
 import "./style.css";
 ```
 
+## less-loader
+```js
+// yarn
+yarn add less less-loader --dev
+// webpack.config.js
+rules: [
+  {
+    test: /\.less$/,
+    use: [
+      "css-loader",
+      "less-loader",
+    ],
+  }
+]
+```
+## url-loader file-loader
+
+## postcss-loader
+
 ## vue-loader
 
 [Vue Loader 官网](https://vue-loader.vuejs.org/zh/)
 
 ```js
-// 安装vue
-yarn add vue
-yarn add vue-loader css-loader vue-template-compiler --dev
-// 在 webpack.config.js 文件中添加
+// yarn
+yarn add vue-loader vue-template-compiler --dev
+// webpack.config.js
+const { VueLoaderPlugin } = require('vue-loader')
 module: {
   rules: [
     {
@@ -148,15 +167,18 @@ module: {
       use: ["vue-style-loader", "css-loader"],
     },
   ];
-}
+},
+plugins: [
+  new VueLoaderPlugin()
+]
 ```
 
 ## babel-loader
 
 ```js
-// 安装
+// yarn
 yarn add babel-loader @babel/core @babel/preset-env --dev
-// 在 webpack.config.js 文件中添加
+// webpack.config.js
 module: {
   rules: [
     {
@@ -187,8 +209,8 @@ module: {
 ## vue-router
 
 ```js
-// 安装
-yarn add vue-router
+// yarn
+yarn add vue vue-router
 // 新建router/index文件
 import Vue from "vue";
 import Router from "vue-router";
@@ -201,7 +223,7 @@ Vue.use(Router);
 ## vuex
 
 ```js
-// 安装
+// yarn
 yarn add vuex
 // 新建store/index文件
 import Vue from "vue";
@@ -215,16 +237,16 @@ Vue.use(Vuex);
 ## element-ui
 
 ```js
-// 安装
+// yarn
 yarn add element-ui
-// 在main.js中添加
+// main.js
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 ```
 
-# 管理输出
+# 管理输出 / plugin
 
 ## 配置输出
 
@@ -239,31 +261,175 @@ output: {
 ## 添加 HtmlWebpackPlugin 生成一个内存 html 并把打包好的 js 文件路径追加到 html 页面中
 
 ```js
-// 安装
+// yarn
 yarn add html-webpack-plugin --dev
 
-// 在webpack.config.js 中引入
+// webpack.config.js
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 plugins: [
-    new HtmlWebpackPlugin({
-        title: '管理输出'
-    })
+  new HtmlWebpackPlugin({
+      title: '管理输出'
+  })
 ]
 ```
 
 ## 清理 /dist 文件夹 clean-webpack-plugin
 
 ```js
-// 安装
+// yarn
 yarn add clean-webpack-plugin --dev
 
-// 在webpack.config.js 中引入
+// webpack.config.js
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 plugins: [
-    new CleanWebpackPlugin(),
+  new CleanWebpackPlugin(),
 ]
+```
+
+## MiniCssExtractPlugin 分离样式文件，将CSS 提取为独立文件，支持按需加载
+
+> 将css样式从js文件中提取出来最终合成一个css文件
+
+```js
+// webpack.prod.js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: [MiniCssExtractPlugin.loader, "css-loader"],
+    },
+  ],
+},
+plugins: [
+  new MiniCssExtractPlugin({
+    filename: "css/[name].css",
+    chunkFilename: "css/[name].css"
+  }),
+],
+```
+## optimization.SplitChunks 代码分离
+
+```js
+// webpack.common.js
+optimization: {
+  // 插件可以将公共的依赖模块提取到已有的 entry chunk 中，或者提取到一个新生成的 chunk, 提取公共资源
+  splitChunks: {
+    chunks: "all";
+  }
+}
+```
+## DefinePlugin 注入全局变量，一般用在环境变量上
+
+```js
+new Webpack.DefinePlugin({
+  "process.env": {
+    NODE_ENV: "development",
+    API_URL: "http://xxx/",
+  },
+})
+```
+
+## ProvidePlugin 定义全局变量
+
+```js
+new Webpack.ProvidePlugin({
+  "Vue": ["vue", "default"] 
+})
+```
+
+## IgnorePlugin 过滤打包文件，减少打包体积大小
+
+```js
+// webpack.prod.js
+plugins: [
+  new Webpack.IgnorePlugin(/.\/lib/, /element-ui/)
+]
+```
+
+## uglifyjs-webpack-plugin 压缩js文件 
+> 用于生产环境打包
+
+```js
+// yarn
+yarn add uglifyjs-webpack-plugin --dev
+
+// webpack.prod.js
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+optimization: {
+  minimizer: [
+    new UglifyJsPlugin({
+      test: /\.js(\?.*)?$/i,
+      exclude: /node_modules/
+    })
+  ],
+}
+```
+
+## copy-webpack-plugin 将文件拷贝到某个目录下
+
+```js
+// yarn
+yarn add copy-webpack-plugin --dev
+
+// webpack.prod.js
+const CopyWebpackPlugin=require('copy-webpack-plugin');
+plugins: [
+  new CopyWebpackPlugin({
+    patterns: [{ from: "static", to: "./static/json" }],
+  })
+]
+
+// form to 都是从根节点开始
+```
+
+## optimize-css-assets-webpack-plugin 压缩css样式
+```js
+// yarn
+yarn add optimize-css-assets-webpack-plugin --dev
+
+// webpack.prod.js
+const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin")
+plugins: [
+  new OptimizeCssAssetsWebpackPlugin(),
+]
+```
+
+## image-minimizer-webpack-plugin 优化图像
+```js
+// yarn 
+yarn add image-minimizer-webpack-plugin --dev
+
+// webpack.prod.js
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+plugins: [
+  new ImageMinimizerPlugin({
+    test: /\.(jpe?g|png|gif|svg)$/i,
+  }),
+]
+```
+
+## friendly-errors-webpack-plugin 友好错误提示
+
+```js
+// yarn
+yarn add friendly-errors-webpack-plugin --dev
+
+// webpack.dev.js
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+plugins: [
+	new FriendlyErrorsWebpackPlugin({
+		compilationSuccessInfo: {
+      messages: [
+        "App running at:",
+        "local: http://localhost:8080",
+        "network: http://192.168.101.7:9998",
+      ],
+    },
+  })
+],
 ```
 
 # 配置开发环境
@@ -273,7 +439,7 @@ plugins: [
 > 当 webpack 打包源代码时，可能会很难追踪到 error(错误) 和 warning(警告) 在源代码中的原始位置。
 
 ```js
-// 在webpack.config.js 中引入
+// webpack.dev.js
 devtool: "inline-source-map",
 ```
 
@@ -282,13 +448,13 @@ devtool: "inline-source-map",
 > 热更新 实时重新加载
 
 ```js
-// 安装
+// yarn
 yarn add webpack-dev-server --dev
-// 在 webpack.config.js 中引入
+// webpack.dev.js
 devServer: {
    contentBase: './dist',
 },
-// 在 package.json 中添加
+// package.json
 "scripts": {
    "start": "webpack server --open"
 },
@@ -297,7 +463,7 @@ devServer: {
 # 配置热模块替换
 
 ```js
-// 在 webpack.config.js 中添加
+// webpack.config.js
 const webpack = require('webpack');
 
 devServer: {
@@ -314,14 +480,14 @@ plugins: [
 > 移除 JavaScript 上下文中的未引用代码(dead-code)  
 
 ```js
-// 在 webpack.dev.js 中添加
+// webpack.dev.js
 // 在development环境打包 可以输出没有压缩过的代码；production环境打包会压缩代码
 optimization: {
   // 告知 webpack 去决定每个模块使用的导出内容
   usedExports: true
 }
 
-// 在 package.json 中添加
+// package.json
 {
   "name": "your-project",
   /**
@@ -340,6 +506,7 @@ optimization: {
 ## 安装 merge
 
 ```js
+// yarn
 yarn add webpack-merge --dev
 ```
 
@@ -368,18 +535,41 @@ module.exports = merge(common, {
   "build": "webpack --config webpack.prod.js"
 },
 ```
+# 构建性能
+[传送门](https://webpack.docschina.org/guides/build-performance/)
+## 通用环境
 
-# 代码分离
+### 更新到最新版本
+使用最新的 webpack、node、npm/yarn 版本
+### loader 
+将 loader 应用于最少数量的必要模块,通过使用 include 字段，仅将 loader 应用在实际需要将其转换的模块
+### 小即是快(smaller = faster)
+> 减少编译结果的整体大小，以提高构建性能。尽量保持 chunk 体积小。
 
+* 使用数量更少/体积更小的 library
+* 在多页面应用程序中使用 SplitChunksPlugin
+* 移除未引用代码
+
+### cache
+缓存生成的 webpack 模块和 chunk，来改善构建速度。
+
+## 开发环境
+### Devtool
+在大多数情况下，最佳选择是 eval-cheap-module-source-map
+### 最小化 entry chunk
 ```js
-// webpack.common.js 中添加
 optimization: {
-  //  插件可以将公共的依赖模块提取到已有的 entry chunk 中，或者提取到一个新生成的 chunk, 提取公共资源
-  splitChunks: {
-    chunks: "all";
-  }
+  runtimeChunk: true,
 }
 ```
+### 输出结果不携带路径信息
+```js
+output: {
+  pathinfo: false,
+}
+```
+## 生产环境
+### Source Maps 是否有必要
 # 总结
 
 一开始学习webpack的时候感觉好干燥，官网那么多东西都不晓得从哪里开始看。不过现在呢我有了个不错的思路：
@@ -393,4 +583,8 @@ optimization: {
 * [当面试官问 Webpack 的时候他想知道什么](https://juejin.cn/post/6943468761575849992#heading-0)  
 * [「吐血整理」再来一打 Webpack 面试题](https://juejin.cn/post/6844904094281236487#heading-0)  
 * [看完webpack官方文档你还是一窍不通，那你就是傻逼](https://webpack.docschina.org/concepts/entry-points/)
-* [[万字总结] 一文吃透 Webpack 核心原理](https://juejin.cn/post/6949040393165996040#heading-24)
+* [[万字总结] 一文吃透 Webpack 核心原理](https://juejin.cn/post/6949040393165996040#heading-24)  
+* [Webpack HMR 原理解析](https://zhuanlan.zhihu.com/p/30669007)
+
+词汇：
+* chunks 模块 在webpack里什么都可以看做是一个模块
