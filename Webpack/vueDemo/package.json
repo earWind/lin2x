@@ -27,6 +27,7 @@
     "node-notifier": "^9.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "portfinder": "^1.0.28",
+    "postcss": "^8.2.9",
     "postcss-loader": "^5.2.0",
     "style-loader": "^2.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
@@ -44,5 +45,8 @@
     "vue": "^2.6.12",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2"
-  }
+  },
+  "browserslist": [
+    "defaults"
+  ]
 }

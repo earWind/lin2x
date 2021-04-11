@@ -66,17 +66,37 @@ module.exports = {
         // use 数组中loader执行顺序：从上到下依次执行
         use: [
           "vue-style-loader",
-          "css-loader",
-          "postcss-loader"
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1 },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [["autoprefixer"]],
+              },
+            },
+          },
         ],
       },
       {
         test: /\.less$/,
         use: [
           "vue-style-loader",
-          "css-loader",
-          "postcss-loader", 
-          "less-loader"
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1 },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [["autoprefixer"]],
+              },
+            },
+          },
+          "less-loader",
         ],
       },
       {

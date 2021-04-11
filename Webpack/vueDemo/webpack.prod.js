@@ -44,6 +44,11 @@ module.exports = merge(common, {
     ],
     runtimeChunk: "single",
   },
+  // 配置如何展示性能提示
+  performance: {
+    // 不提示
+    hints: false
+  },
   module: {
     rules: [
       {
@@ -70,9 +75,9 @@ module.exports = merge(common, {
     }),
     // 压缩css
     new OptimizeCssAssetsWebpackPlugin(),
-    // 压缩图片
-    new ImageMinimizerPlugin({
-      test: /\.(jpe?g|png|gif|svg)$/i,
-    }),
+    // 优化图像
+    // new ImageMinimizerPlugin({
+    //   test: /\.(jpe?g|png|gif|svg)$/i,
+    // }),
   ],
 });

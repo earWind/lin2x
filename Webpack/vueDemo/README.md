@@ -145,12 +145,44 @@ rules: [
 ```
 ## url-loader file-loader
 
-## postcss-loader
+## postcss-loader 
+> 用 JavaScript 代码来处理 CSS。它负责把 CSS 代码解析成抽象语法树结构（Abstract Syntax Tree，AST），再交由插件来进行处理。
+```js
+// yarn
+yarn ostcss-loader postcss autoprefixer
+
+// webpack.common.js
+rules: [
+  {
+    test: /\.css$/i,
+    use: [
+      "style-loader",
+      {
+        loader: "css-loader",
+        options: { importLoaders: 1 },
+      },
+      {
+        loader: "postcss-loader",
+        options: {
+          postcssOptions: {
+            plugins: [
+              [
+                // 添加浏览器前缀
+                "autoprefixer",
+              ],
+            ],
+          },
+        },
+      },
+    ]
+  }
+]
+```
 
 ## vue-loader
 
 [Vue Loader 官网](https://vue-loader.vuejs.org/zh/)
-
+> 如果你在开发一个库或多项目仓库 (monorepo)，请注意导入 CSS 是具有副作用的。请确保在 package.json 中移除 "sideEffects": false，否则 CSS 代码块会在生产环境构建时被 webpack 丢掉。
 ```js
 // yarn
 yarn add vue-loader vue-template-compiler --dev
