@@ -1,6 +1,6 @@
 # 前言
 
-本篇幅用于练习用 webpack 搭建 vue 开发环境，主要从以下几点入手
+用 webpack 搭建 vue 开发环境，主要从以下几点入手
 
 1. webpack 的安装
 2. 跟着[官网文档](https://webpack.docschina.org/)搭建一个 webpack 管理的项目，了解几个重要概念：
