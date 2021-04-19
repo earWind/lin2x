@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。
+      你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+      返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。
+
+      示例 1：
+      输入：[7,1,5,3,6,4]
+      输出：5
+      解释：在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+          注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
+
+      示例 2：
+      输入：prices = [7,6,4,3,1]
+      输出：0
+      解释：在这种情况下, 没有交易完成, 所以最大利润为 0。
+    */
+
+      // 1.暴力解法 双重循环
+      var maxProfit = function (prices) {
+        let max = 0;
+        let index = 0;
+        while (index < prices.length) {
+          for (let i = index + 1; i < prices.length; i++) {
+            let diff = prices[i] - prices[index];
+            max = Math.max(max, diff);
+          }
+          ++index;
+        }
+        return max;
+      };
+
+      // 2.双指针 慢指针指向走过的最小值，快指针依次往后走
+      // var maxProfit = function (prices) {
+      //   let min = prices[0];
+      //   let max = 0;
+      //   for (let i = 1; i < prices.length; i++) {
+      //     min = Math.min(prices[i], min)
+      //     max = Math.max(prices[i] - min, max)
+      //   }
+      //   return max
+      // };
+
+      // 3.动态规划
+      // ...
+
+      console.log(maxProfit([7, 1, 5, 3, 6, 4]));
+    </script>
+  </body>
+</html>
