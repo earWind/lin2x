@@ -12,23 +12,33 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 
 let uid = 0
 
+/**
+ * 定义 Vue.prototype._init 方法
+ * @param {*} Vue Vue构造函数
+ */
 export function initMixin (Vue: Class<Component>) {
+  // 负责 Vue 的初始化过程 options:选项/配置项
   Vue.prototype._init = function (options?: Object) {
+    // vue 实例
     const vm: Component = this
     // a uid
+    // 每个 vue 实例都有一个 _uid，并且是依次递增的
     vm._uid = uid++
 
-    let startTag, endTag
-    /* istanbul ignore if */
-    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-      startTag = `vue-perf-start:${vm._uid}`
-      endTag = `vue-perf-end:${vm._uid}`
-      mark(startTag)
-    }
+    // 开始测性能 提供高精度的时间戳，可以更加精准的计算脚本运行的时间，测量被包裹的代码运行执行时间
+    // let startTag, endTag
+    // /* istanbul ignore if */
+    // if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+    //   startTag = `vue-perf-start:${vm._uid}`
+    //   endTag = `vue-perf-end:${vm._uid}`
+    //   mark(startTag)
+    // }
 
     // a flag to avoid this being observed
+    // 一个防止vm实例自身被观察的标志位
     vm._isVue = true
     // merge options
+    // 合并组件配置项
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -58,12 +68,13 @@ export function initMixin (Vue: Class<Component>) {
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 
+    // 结束测性能，得出结果 measure
     /* istanbul ignore if */
-    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-      vm._name = formatComponentName(vm, false)
-      mark(endTag)
-      measure(`vue ${vm._name} init`, startTag, endTag)
-    }
+    // if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+    //   vm._name = formatComponentName(vm, false)
+    //   mark(endTag)
+    //   measure(`vue ${vm._name} init`, startTag, endTag)
+    // }
 
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
