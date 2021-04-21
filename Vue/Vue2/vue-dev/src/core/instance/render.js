@@ -16,21 +16,26 @@ import VNode, { createEmptyVNode } from '../vdom/vnode'
 
 import { isUpdatingChildComponent } from './lifecycle'
 
+/* 初始化render */
 export function initRender (vm: Component) {
   vm._vnode = null // the root of the child tree
+  /* 用来存放static节点，已经被渲染的并且不存在v-for中的static节点不需要重新渲染，只需要进行浅拷贝 */
   vm._staticTrees = null // v-once cached trees
   const options = vm.$options
-  const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
+  const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree 父树中的占位符节点
   const renderContext = parentVnode && parentVnode.context
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
+  /* 作用域slot */
   vm.$scopedSlots = emptyObject
   // bind the createElement fn to this instance
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  /* 将createElement函数绑定到该实例上，该vm存在闭包中，不可修改，vm实例则固定。这样我们就可以得到正确的上下文渲染 */
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
+  /* 常规方法被用于公共版本，被用来作为用户界面的渲染方法 */
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 
   // $attrs & $listeners are exposed for easier HOC creation.
@@ -62,10 +67,12 @@ export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
   installRenderHelpers(Vue.prototype)
 
+  /* 定义$nextTick方法 */
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)
   }
 
+  /* _render渲染函数，返回一个VNode节点 */
   Vue.prototype._render = function (): VNode {
     const vm: Component = this
     const { render, _parentVnode } = vm.$options
@@ -82,6 +89,7 @@ export function renderMixin (Vue: Class<Component>) {
     // to the data on the placeholder node.
     vm.$vnode = _parentVnode
     // render self
+    /* 渲染 */
     let vnode
     try {
       // There's no need to maintain a stack because all render fns are called
@@ -112,6 +120,7 @@ export function renderMixin (Vue: Class<Component>) {
       vnode = vnode[0]
     }
     // return empty vnode in case the render function errored out
+    /* 如果VNode节点没有创建成功则创建一个空节点 */
     if (!(vnode instanceof VNode)) {
       if (process.env.NODE_ENV !== 'production' && Array.isArray(vnode)) {
         warn(

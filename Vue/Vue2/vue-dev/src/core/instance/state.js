@@ -36,6 +36,7 @@ const sharedPropertyDefinition = {
   set: noop
 }
 
+/* 通过proxy函数将_data（或者_props等）上面的数据代理到vm上，这样就可以用app.text代替app._data.text了 */
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]
@@ -46,37 +47,57 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/**
+ * 初始化props、methods、data、computed与watch
+ * 两件事：
+ *   数据响应式的入口：分别处理 props、methods、data、computed、watch
+ *   优先级：props、methods、data、computed 对象中的属性不能出现重复，优先级和列出顺序一致
+ *   其中 computed 中的 key 不能和 props、data 中的 key 重复，methods 不影响
+ */
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  /* 初始化props */
   if (opts.props) initProps(vm, opts.props)
+  /* 初始化方法 */
   if (opts.methods) initMethods(vm, opts.methods)
+  /* 初始化data */
   if (opts.data) {
     initData(vm)
   } else {
+    /* 该组件没有data的时候绑定一个空对象 */
     observe(vm._data = {}, true /* asRootData */)
   }
+  /* 初始化computed */
   if (opts.computed) initComputed(vm, opts.computed)
+  /* 初始化watchers */
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch)
   }
 }
 
+/* 初始化props，为props对象的每个属性设置响应式，并将其代理到 vm 实例上 */
 function initProps (vm: Component, propsOptions: Object) {
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
+  /*  缓存 props 的每个 key，性能优化 */
   const keys = vm.$options._propKeys = []
+  /* 根据$parent是否存在来判断当前是否是根结点 */
   const isRoot = !vm.$parent
   // root instance props should be converted
   if (!isRoot) {
     toggleObserving(false)
   }
+  /* 遍历 props 对象 */
   for (const key in propsOptions) {
+    /* 缓存 key */
     keys.push(key)
+    /* 验证prop,不存在用默认值替换，类型为bool则声称true或false，当使用default中的默认值的时候会将默认值的副本进行observe */
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
+    /* 为 props 的每个 key 是设置数据响应式 */
     if (process.env.NODE_ENV !== 'production') {
       const hyphenatedKey = hyphenate(key)
       if (isReservedAttribute(hyphenatedKey) ||
@@ -104,12 +125,14 @@ function initProps (vm: Component, propsOptions: Object) {
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
     if (!(key in vm)) {
+      /* 代理 key 到 vm 对象上 */
       proxy(vm, `_props`, key)
     }
   }
   toggleObserving(true)
 }
 
+/* 初始化data */
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -124,6 +147,11 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  /**
+   * 两件事
+   *   1、判重处理，data 对象上的属性不能和 props、methods 对象上的属性相同
+   *   2、代理 data 对象上的属性到 vm 实例
+   */
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
@@ -149,6 +177,7 @@ function initData (vm: Component) {
     }
   }
   // observe data
+  /* 为 data 对象上的数据设置响应式 */
   observe(data, true /* asRootData */)
 }
 
@@ -167,15 +196,20 @@ export function getData (data: Function, vm: Component): any {
 
 const computedWatcherOptions = { lazy: true }
 
+/* 初始化computed */
 function initComputed (vm: Component, computed: Object) {
   // $flow-disable-line
   const watchers = vm._computedWatchers = Object.create(null)
   // computed properties are just getters during SSR
   const isSSR = isServerRendering()
 
+  /* 遍历 computed 对象 */
   for (const key in computed) {
+    /* 获取 key 对应的值，即 getter 函数 */
     const userDef = computed[key]
+    /* 计算属性可能是一个function，也有可能设置了get以及set的对象 */
     const getter = typeof userDef === 'function' ? userDef : userDef.get
+    /* getter不存在的时候抛出warning并且给getter赋空函数 */
     if (process.env.NODE_ENV !== 'production' && getter == null) {
       warn(
         `Getter is missing for computed property "${key}".`,
@@ -184,11 +218,13 @@ function initComputed (vm: Component, computed: Object) {
     }
 
     if (!isSSR) {
+      /* 为 computed 属性创建 watcher 实例 */
       // create internal watcher for the computed property.
       watchers[key] = new Watcher(
         vm,
         getter || noop,
         noop,
+        /* 配置项，computed 默认是懒执行 */
         computedWatcherOptions
       )
     }
@@ -197,8 +233,13 @@ function initComputed (vm: Component, computed: Object) {
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
     if (!(key in vm)) {
+      /* 
+       * 代理 computed 对象中的属性到 vm 实例
+       * 这样就可以使用 vm.computedKey 访问计算属性了
+       */
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
+      /* 非生产环境有一个判重处理，computed 对象中的属性不能和 data、props 中的属性相同 */
       if (key in vm.$data) {
         warn(`The computed property "${key}" is already defined in data.`, vm)
       } else if (vm.$options.props && key in vm.$options.props) {
@@ -210,12 +251,17 @@ function initComputed (vm: Component, computed: Object) {
   }
 }
 
+/**
+ * 定义计算属性
+ * computed 对象中的 key 到 target（vm）上 
+*/
 export function defineComputed (
   target: any,
   key: string,
   userDef: Object | Function
 ) {
   const shouldCache = !isServerRendering()
+  /* 构造属性描述符(get、set) */
   if (typeof userDef === 'function') {
     sharedPropertyDefinition.get = shouldCache
       ? createComputedGetter(key)
@@ -238,9 +284,11 @@ export function defineComputed (
       )
     }
   }
+  /* 拦截对 target.key 的访问和设置 */
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/* 创建计算属性的getter */
 function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
@@ -262,6 +310,7 @@ function createGetterInvoker(fn) {
   }
 }
 
+/* 初始化方法 */
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
@@ -273,6 +322,7 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
+      /* 与props名称冲突报出warning */
       if (props && hasOwn(props, key)) {
         warn(
           `Method "${key}" has already been defined as a prop.`,
@@ -286,10 +336,12 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    /* 在为null的时候写上空方法，有值时候将上下文替换成vm */
     vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm)
   }
 }
 
+/* 初始化watchers */
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
@@ -303,6 +355,7 @@ function initWatch (vm: Component, watch: Object) {
   }
 }
 
+/* 创建一个观察者Watcher */
 function createWatcher (
   vm: Component,
   expOrFn: string | Function,

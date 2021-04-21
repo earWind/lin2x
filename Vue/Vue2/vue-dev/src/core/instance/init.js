@@ -1,17 +1,17 @@
 /* @flow */
 
-// import config from '../config'
+import config from '../config'
 import { initProxy } from "./proxy";
 import { initState } from "./state";
 import { initRender } from "./render";
 import { initEvents } from "./events";
-// import { mark, measure } from '../util/perf'
+import { mark, measure } from '../util/perf'
 import { initLifecycle, callHook } from "./lifecycle";
 import { initProvide, initInjections } from "./inject";
 import {
   extend,
   mergeOptions,
-  // formatComponentName
+  formatComponentName
 } from "../util/index";
 
 let uid = 0;
@@ -30,13 +30,13 @@ export function initMixin(Vue: Class<Component>) {
     vm._uid = uid++;
 
     /* 开始测性能 提供高精度的时间戳，可以更加精准的计算脚本运行的时间，测量被包裹的代码运行执行时间 */
-    // let startTag, endTag
-    // /* istanbul ignore if */
-    // if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    //   startTag = `vue-perf-start:${vm._uid}`
-    //   endTag = `vue-perf-end:${vm._uid}`
-    //   mark(startTag)
-    // }
+    let startTag, endTag
+    /* istanbul ignore if */
+    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+      startTag = `vue-perf-start:${vm._uid}`
+      endTag = `vue-perf-end:${vm._uid}`
+      mark(startTag)
+    }
 
     // a flag to avoid this being observed
     /* 一个防止vm实例自身被观察的标志位 */
@@ -72,44 +72,42 @@ export function initMixin(Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm;
-    /* 初始化组件实例关系属性，比如 $parent、$children、$root、$refs 等 */
+    /* 初始化生命周期 */
     initLifecycle(vm);
-    /**
-     * 初始化自定义事件，我们在 <comp @click="handleClick" /> 上注册的事件，监听者不是父组件，
-     * 而是子组件本身，也就是说事件的派发和监听者都是子组件本身，和父组件无关
-     */
+    /* 初始化事件 */
     initEvents(vm);
-    /* 解析组件的插槽信息，得到 vm.$slot，处理渲染函数，得到 vm.$createElement 方法，即 h 函数 */
+    /* 初始化render */
     initRender(vm);
-    /* 调用 beforeCreate 钩子函数 */
+    /* 调用beforeCreate钩子函数并且触发beforeCreate钩子事件 */
     callHook(vm, "beforeCreate");
-    /* 初始化组件的 inject 配置项，得到 result[key] = val 形式的配置对象，然后对结果数据进行响应式处理，并代理每个 key 到 vm 实例 */
+    /* 初始化inject */
     initInjections(vm); // resolve injections before data/props
-    /* 数据响应式的重点，处理 props、methods、data、computed、watch */
+    /* 初始化props、methods、data、computed与watch 数据响应式 */
     initState(vm);
     /* 解析组件配置项上的 provide 对象，将其挂载到 vm._provided 属性上 */
     initProvide(vm); // resolve provide after data/props
-    /* 调用 created 钩子函数 */
+    /* 调用created钩子函数并且触发created钩子事件 */
     callHook(vm, "created");
 
     /* 结束测性能，得出结果 measure */
     /* istanbul ignore if */
-    // if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    //   vm._name = formatComponentName(vm, false)
-    //   mark(endTag)
-    //   measure(`vue ${vm._name} init`, startTag, endTag)
-    // }
+    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+      /* 格式化组件名 */
+      vm._name = formatComponentName(vm, false)
+      mark(endTag)
+      measure(`vue ${vm._name} init`, startTag, endTag)
+    }
 
     /* 如果发现配置项上有 el 选项，则自动调用 $mount 方法，也就是说有了 el 选项，就不需要再手动调用 $mount，反之，没有 el 则必须手动调用 $mount */
     if (vm.$options.el) {
-      /* 调用 $mount 方法，进入挂载阶段 */
+      /* 挂载组件 */
       vm.$mount(vm.$options.el);
     }
   };
 }
 
 /**
- * 初始化内部组件
+ * 初始化子组件
  * @param {*} vm vue组件实例
  * @param {*} options 选项/配置项
  */
