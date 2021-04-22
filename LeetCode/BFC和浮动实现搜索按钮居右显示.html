@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .fetch-content {
+        border: 1px solid yellow;
+      }
+      .fetch-content:after {
+        content: "";
+        clear: both;
+        display: block;
+      }
+      .fetch-item {
+        width: 25%;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        float: left;
+        box-sizing: border-box;
+        margin: 10px 0;
+      }
+
+      .fetch-item:nth-child(odd) {
+        background-color: red;
+      }
+
+      .fetch-item:nth-child(even) {
+        background-color: green;
+      }
+
+      .fetch-item.btn {
+        background-color: hotpink;
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fetch-content">
+      <div class="fetch-item">条件1</div>
+      <div class="fetch-item">条件2</div>
+      <div class="fetch-item">条件3</div>
+      <div class="fetch-item">条件4</div>
+      <div class="fetch-item">条件5</div>
+      <div class="fetch-item btn">查询</div>
+    </div>
+
+    <div>else</div>
+  </body>
+</html>
