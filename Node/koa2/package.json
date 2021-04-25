@@ -7,8 +7,12 @@
     "dev": "node app.js"
   },
   "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
+    "koa-static": "^5.0.0",
     "koa2": "^2.0.0-alpha.7",
-    "koa2-cors": "^2.0.6"
+    "koa2-cors": "^2.0.6",
+    "mysql": "^2.18.1"
   }
 }

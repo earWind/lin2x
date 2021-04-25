@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <label for="account">账号</label>
+    <input
+      type="text"
+      value=""
+      name="account"
+      class="account"
+      placeholder="请输入账号"
+    />
+    <br /><br />
+    <label for="pwd">密码</label>
+    <input
+      type="password"
+      value=""
+      name="pwd"
+      class="pwd"
+      placeholder="请输入密码"
+    />
+    <br /><br />
+    <button class="btn">登录/注册</button>
+  </body>
+</html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(".btn").click(() => {
+    $.ajax({
+      url: "/login/register",
+      method: "POST",
+      data: {
+        account: $(".account").val(),
+        pwd: $(".pwd").val(),
+      },
+      success(res) {
+        console.log(res);
+      },
+      error(err) {
+        console.log(err);
+      },
+    });
+  });
+</script>

@@ -7,7 +7,13 @@ const router = require("./routers");
 const port = 3000;
 // 跨域
 const cors = require("koa2-cors");
+// 读取静态资源文件
+const static = require("koa-static");
+const path = require("path");
 
+app.use(static(path.join(__dirname + "/assets")));
+
+// 允许跨域
 app.use(
   cors({
     origin: function (ctx) {
@@ -20,6 +26,14 @@ app.use(
     exposeHeaders: ["WWW-Authenticate", "Server-Authorization"], // 设置获取其他自定义字段
   })
 );
+
+// 匹配不到的页面 跳到404
+app.use(async (ctx, next) => {
+  await next();
+  if (parseInt(ctx.status) === 404) {
+    ctx.response.redirect("/404");
+  }
+});
 
 /**
  * router.routes() 启动路由

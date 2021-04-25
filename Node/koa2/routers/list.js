@@ -1,16 +1,16 @@
 const Router = require("koa-router");
-const list = new Router();
+const router = new Router();
 
-list.get("/", async (ctx) => {
+router.get("/", async (ctx) => {
   ctx.body = "列表-首页";
 });
 
-list.get("/news", async (ctx) => {
+router.get("/news", async (ctx) => {
   ctx.body = "列表-新闻";
 });
 
-list.get("/music", async (ctx) => {
+router.get("/music", async (ctx) => {
   ctx.body = "列表-音乐";
 });
 
-module.exports = list
+module.exports = router
