@@ -23,6 +23,7 @@ let uid = 0;
 export function initMixin(Vue: Class<Component>) {
   /* 负责 Vue 的初始化过程 (options:) */
   Vue.prototype._init = function (options?: Object) {
+    console.log(options)
     /* vue 实例 */
     const vm: Component = this;
     // a uid

@@ -9,14 +9,61 @@
   </head>
   <body>
     <div id="app">
-      <span>{{msg}}</span>
+      <p>
+        <button @click="clickHandle(-1)">-1</button>
+        <span>{{count}}</span>
+        <button @click="clickHandle(-1)">+1</button>
+      </p>
+
+      <p>double count -- {{double}}</p>
     </div>
 
     <script>
       const vm = new Vue({
         el: "#app",
-        data: {
-          msg: "msg",
+        data() {
+          return {
+            count: 0,
+            person: {
+              age: 15,
+              name: "xiaoxiao",
+            },
+            cars: ["benci", "dazong"],
+          };
+        },
+        methods: {
+          clickHandle(num) {
+            return (this.count += 1);
+          },
+        },
+        computed: {
+          double: function () {
+            return this.count * 2;
+          },
+        },
+        beforeCreate() {
+          console.log("beforeCreate");
+        },
+        created() {
+          console.log("created");
+        },
+        beforeMount() {
+          console.log("beforeMount");
+        },
+        mounted() {
+          console.log("mounted");
+        },
+        beforeUpdate() {
+          console.log("beforeUpdate");
+        },
+        updated() {
+          console.log("updated");
+        },
+        beforeDestroy() {
+          console.log("beforeDestroy");
+        },
+        destroyed() {
+          console.log("destroyed");
         },
       });
     </script>
