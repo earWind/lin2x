@@ -91,7 +91,10 @@ tree / f > tree.txt;
 </html>
 ```
 
-Then start debugging
+### Then start debugging
+
+- 启动 vue：yarn dev 主要是用于热更新
+- 用 live-serve 打开 test.html
 
 # vue 初始化过程 （new Vue(options)）都做了什么
 

@@ -16,9 +16,27 @@
       </p>
 
       <p>double count -- {{double}}</p>
+
+      <hr />
+
+      <p>
+        <button-counter></button-counter>
+      </p>
     </div>
 
     <script>
+      // 全局组件 不用在父组件中定义
+      Vue.component("button-counter", {
+        data: function () {
+          return {
+            count: 0,
+          };
+        },
+        template:
+          '<button v-on:click="count++">You clicked me {{ count }} times.</button>',
+      });
+
+      // 父组件
       const vm = new Vue({
         el: "#app",
         data() {

@@ -1,18 +1,14 @@
 /* @flow */
 
-import config from '../config'
+import config from "../config";
 import { initProxy } from "./proxy";
 import { initState } from "./state";
 import { initRender } from "./render";
 import { initEvents } from "./events";
-import { mark, measure } from '../util/perf'
+import { mark, measure } from "../util/perf";
 import { initLifecycle, callHook } from "./lifecycle";
 import { initProvide, initInjections } from "./inject";
-import {
-  extend,
-  mergeOptions,
-  formatComponentName
-} from "../util/index";
+import { extend, mergeOptions, formatComponentName } from "../util/index";
 
 let uid = 0;
 
@@ -23,20 +19,20 @@ let uid = 0;
 export function initMixin(Vue: Class<Component>) {
   /* 负责 Vue 的初始化过程 (options:) */
   Vue.prototype._init = function (options?: Object) {
-    console.log(options)
+    console.log(options);
     /* vue 实例 */
     const vm: Component = this;
     // a uid
-    /* 每个 vue 实例都有一个 _uid，并且是依次递增的 */
-    vm._uid = uid++;
+    /* 每个 vue 实例都有一个 _uid，并且是依次递增的，每执行一次uid就会加一 */
+    vm._uid = uid++; //
 
     /* 开始测性能 提供高精度的时间戳，可以更加精准的计算脚本运行的时间，测量被包裹的代码运行执行时间 */
-    let startTag, endTag
+    let startTag, endTag;
     /* istanbul ignore if */
-    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-      startTag = `vue-perf-start:${vm._uid}`
-      endTag = `vue-perf-end:${vm._uid}`
-      mark(startTag)
+    if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+      startTag = `vue-perf-start:${vm._uid}`;
+      endTag = `vue-perf-end:${vm._uid}`;
+      mark(startTag);
     }
 
     // a flag to avoid this being observed
@@ -48,7 +44,7 @@ export function initMixin(Vue: Class<Component>) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
-      /* 如果是子组件走这里，性能优化 */
+      /* 如果是子组件走这里，性能优化，_isComponent 是否是子组件 */
       /* 将组件配置对象上的一些深层次属性放到 vm.$options 选项中，以提高代码的执行效率 */
       initInternalComponent(vm, options);
     } else {
@@ -75,7 +71,7 @@ export function initMixin(Vue: Class<Component>) {
     vm._self = vm;
     /* 初始化生命周期 */
     initLifecycle(vm);
-    /* 初始化事件 */
+    /* 初始化自定义事件 */
     initEvents(vm);
     /* 初始化render */
     initRender(vm);
@@ -92,11 +88,11 @@ export function initMixin(Vue: Class<Component>) {
 
     /* 结束测性能，得出结果 measure */
     /* istanbul ignore if */
-    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+    if (process.env.NODE_ENV !== "production" && config.performance && mark) {
       /* 格式化组件名 */
-      vm._name = formatComponentName(vm, false)
-      mark(endTag)
-      measure(`vue ${vm._name} init`, startTag, endTag)
+      vm._name = formatComponentName(vm, false);
+      mark(endTag);
+      measure(`vue ${vm._name} init`, startTag, endTag);
     }
 
     /* 如果发现配置项上有 el 选项，则自动调用 $mount 方法，也就是说有了 el 选项，就不需要再手动调用 $mount，反之，没有 el 则必须手动调用 $mount */
@@ -108,8 +104,8 @@ export function initMixin(Vue: Class<Component>) {
 }
 
 /**
- * 初始化子组件
- * @param {*} vm vue组件实例
+ * 把子组件的 options 属性 拿出来放在子组件实例上 方便读取 即 优化
+ * @param {*} vm 子组件实例
  * @param {*} options 选项/配置项
  */
 export function initInternalComponent(
