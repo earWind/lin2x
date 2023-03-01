@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "MyFont";
+  src: url("../fonts/iconfont.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hello {
+  font-family: "MyFont";
+  color: greenyellow;
+  background: url("../assets/lyf.jpg");
+  background-repeat: no-repeat;
+}
+.left {
+  margin-left: 500px;
+}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .tool-container {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      .bar {
+        display: inline-block;
+        list-style-type: none;
+        cursor: pointer;
+        user-select: none;
+        padding: 0 36px;
+      }
+      canvas {
+        flex: 1;
+      }
+      .active {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <ul class="tool-container">
+        <!-- <li class="bar">画笔</li> -->
+        <li class="bar">
+          形状
+          <select name="" id="shape">
+            <option value="line">线</option>
+            <option value="rect">矩形</option>
+            <option value="arc">圆形</option>
+          </select>
+        </li>
+        <li class="bar">
+          粗细
+          <select name="" id="lineWidth">
+            <option value="1">正常</option>
+            <option value="5">细线</option>
+            <option value="10">粗线</option>
+          </select>
+        </li>
+        <li class="bar">
+          颜色
+          <input type="color" name="" id="color" value="#991999" />
+        </li>
+        <li class="bar" id="eraser">橡皮擦</li>
+        <li class="bar" id="save">保存</li>
+      </ul>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+      const W = canvas.offsetWidth;
+      const H = canvas.offsetHeight;
+      canvas.setAttribute("width", W);
+      canvas.setAttribute("height", H);
+
+      const painter = {
+        isDraw: false,
+        shape: "line",
+        lineWidth: 1,
+        color: "#991999",
+        beginX: 0,
+        beginY: 0,
+        imgData: null,
+        eraser: false,
+      };
+
+      canvas.onmousedown = function (e) {
+        painter.isDraw = true;
+        const x = e.offsetX;
+        const y = e.offsetY;
+
+        // 保存图像待使用
+        painter.imgData = ctx.getImageData(0, 0, W, H);
+
+        ctx.save();
+        ctx.lineWidth = painter.lineWidth;
+        ctx.strokeStyle = painter.color;
+
+        switch (painter.shape) {
+          case "line":
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.moveTo(x, y);
+            break;
+          case "rect":
+          case "arc":
+          case "eraser":
+            painter.beginX = x;
+            painter.beginY = y;
+            break;
+          default:
+            break;
+        }
+      };
+
+      canvas.onmousemove = function (e) {
+        if (painter.isDraw) {
+          const x = e.offsetX;
+          const y = e.offsetY;
+          const bX = painter.beginX;
+          const bY = painter.beginY;
+
+          // 清空画布，并将保存的图像直接填充进去
+          ctx.clearRect(0, 0, W, H);
+          if (painter.imgData) {
+            ctx.putImageData(painter.imgData, 0, 0, 0, 0, W, H);
+          }
+
+          switch (painter.shape) {
+            case "line":
+              ctx.lineTo(x, y);
+              break;
+            case "rect":
+              ctx.beginPath();
+              ctx.rect(bX, bY, x - bX, y - bY);
+              break;
+              ctx.closePath();
+            case "arc":
+              ctx.beginPath();
+              const r = Math.sqrt(Math.pow(x - bX, 2) + Math.pow(y - bY, 2));
+              ctx.arc(bX, bY, r, 0, 2 * Math.PI);
+              ctx.closePath();
+              break;
+            case "eraser":
+              ctx.clearRect(x, y, 100, 100);
+              break;
+            default:
+              break;
+          }
+
+          ctx.stroke();
+        }
+      };
+
+      canvas.onmouseup = function (e) {
+        painter.isDraw = false;
+        ctx.restore();
+      };
+
+      document.querySelector("#shape").onchange = function (e) {
+        painter.shape = e.target.value;
+      };
+
+      document.querySelector("#lineWidth").onchange = function (e) {
+        painter.lineWidth = e.target.value;
+      };
+
+      document.querySelector("#color").oninput = function (e) {
+        painter.color = e.target.value;
+      };
+
+      const $eraser = document.querySelector("#eraser");
+      $eraser.onclick = function (e) {
+        painter.eraser = !painter.eraser;
+        if (painter.eraser) {
+          $eraser.className = "bar active";
+          painter.shape = "eraser";
+        } else {
+          $eraser.className = "bar";
+          painter.shape = "line";
+        }
+      };
+
+      document.querySelector("#save").onclick = function (e) {
+        const url = canvas.toDataURL("image/jpg");
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "草稿纸";
+        a.click();
+      };
+    </script>
+  </body>
+</html>

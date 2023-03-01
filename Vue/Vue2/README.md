@@ -5,4 +5,4 @@
 
 [learnVue](https://github.com/earWind/learnVue)
 
-[https://juejin.cn/post/6949370458793836580](https://juejin.cn/post/6949370458793836580)
+[Vue 源码解读--李永宁](https://juejin.cn/post/6949370458793836580)

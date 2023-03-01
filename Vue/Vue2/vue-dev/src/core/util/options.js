@@ -267,16 +267,14 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
     : childVal
 }
 
-/**
- * Validate component names
- * 检查是否是有效的组件名
- */
+// 检查是否是有效的组件名
 function checkComponents (options: Object) {
   for (const key in options.components) {
     validateComponentName(key)
   }
 }
 
+// 校验规则
 export function validateComponentName (name: string) {
   if (!new RegExp(`^[a-zA-Z][\\-\\.0-9_${unicodeRegExp.source}]*$`).test(name)) {
     warn(
@@ -292,11 +290,7 @@ export function validateComponentName (name: string) {
   }
 }
 
-/**
- * Ensure all props option syntax are normalized into the
- * Object-based format.
- * 确保所有props option序列化成正确的格式
- */
+// 确保所有props option序列化成正确的格式
 function normalizeProps (options: Object, vm: ?Component) {
   const props = options.props
   if (!props) return
@@ -307,7 +301,7 @@ function normalizeProps (options: Object, vm: ?Component) {
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
-        /* 将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc */
+        // 将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc
         name = camelize(val)
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
@@ -317,7 +311,7 @@ function normalizeProps (options: Object, vm: ?Component) {
   } else if (isPlainObject(props)) {
     for (const key in props) {
       val = props[key]
-      /* 将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc */
+      // 将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc
       name = camelize(key)
       res[name] = isPlainObject(val)
         ? val
@@ -385,18 +379,14 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
   }
 }
 
-/**
- * Merge two option objects into a new one.
- * Core utility used in both instantiation and inheritance.
- * 合并两个选项，出现相同配置项时，子选项会覆盖父选项的配置
- */
+// 合并两个选项，出现相同配置项时，子选项会覆盖父选项的配置
 export function mergeOptions (
   parent: Object,
   child: Object,
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
-    /* 检查是否是有效的组件名 */
+    // 检查是否是有效的组件名
     checkComponents(child)
   }
 
@@ -404,16 +394,11 @@ export function mergeOptions (
     child = child.options
   }
 
-  /* 确保所有props option序列化成正确的格式 */
+  // 标准化 props、inject、directive 选项，方便后续程序的处理
   normalizeProps(child, vm)
   normalizeInject(child, vm)
-  /* 将函数指令序列化后加入对象 */
   normalizeDirectives(child)
 
-  // Apply extends and mixins on the child options,
-  // but only if it is a raw options object that isn't
-  // the result of another mergeOptions call.
-  // Only merged options has the _base property.
   /**
    * 处理原始 child 对象上的 extends 和 mixins，分别执行 mergeOptions，将这些继承而来的选项合并到 parent
    * mergeOptions 处理过的对象会含有 _base 属性
@@ -431,20 +416,20 @@ export function mergeOptions (
 
   const options = {}
   let key
-  /* 遍历 父选项 */
+  // 遍历 父选项
   for (key in parent) {
     mergeField(key)
   }
-  /* 遍历 子选项，如果父选项不存在该配置，则合并，否则跳过，因为父子拥有同一个属性的情况在上面处理父选项时已经处理过了，用的子选项的值 */
+  // 遍历 子选项，如果父选项不存在该配置，则合并，否则跳过，因为父子拥有同一个属性的情况在上面处理父选项时已经处理过了，用的子选项的值
   for (key in child) {
     if (!hasOwn(parent, key)) {
       mergeField(key)
     }
   }
-  /*  合并选项，childVal 优先级高于 parentVal */
+  // 合并选项，childVal 优先级高于 parentVal
   function mergeField (key) {
     const strat = strats[key] || defaultStrat
-    /* 值为如果 childVal 存在则优先使用 childVal，否则使用 parentVal */
+    // 值为如果 childVal 存在则优先使用 childVal，否则使用 parentVal
     options[key] = strat(parent[key], child[key], vm, key)
   }
   return options

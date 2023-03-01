@@ -50,6 +50,7 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
   return invoker
 }
 
+// 更新监听事件
 export function updateListeners (
   on: Object,
   oldOn: Object,
@@ -59,22 +60,27 @@ export function updateListeners (
   vm: Component
 ) {
   let name, def, cur, old, event
+  // 遍历新事件的所有方法
   for (name in on) {
     def = cur = on[name]
     old = oldOn[name]
+    // 取得并去除事件的~、!、&等前缀
     event = normalizeEvent(name)
     /* istanbul ignore if */
     if (__WEEX__ && isPlainObject(def)) {
       cur = def.handler
       event.params = def.params
     }
+    // isUndef用于判断传入对象不等于undefined或者null
     if (isUndef(cur)) {
+      // 新方法不存在抛出打印
       process.env.NODE_ENV !== 'production' && warn(
         `Invalid handler for event "${event.name}": got ` + String(cur),
         vm
       )
     } else if (isUndef(old)) {
       if (isUndef(cur.fns)) {
+        // createFnInvoker返回一个函数，该函数的作用是将生成时的fns执行，如果fns是数组，则便利执行它的每一项
         cur = on[name] = createFnInvoker(cur, vm)
       }
       if (isTrue(event.once)) {
@@ -86,6 +92,7 @@ export function updateListeners (
       on[name] = old
     }
   }
+  // 移除所有旧的事件
   for (name in oldOn) {
     if (isUndef(on[name])) {
       event = normalizeEvent(name)

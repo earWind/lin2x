@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const colorArray = [
+        "#4CBF88",
+        "#F2B134",
+        "#6F4A70",
+        "#FF6275",
+        "#00B5C4",
+      ];
+
+      canvas.setAttribute("width", W);
+      canvas.setAttribute("height", H);
+
+      window.addEventListener("resize", (e) => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+      });
+
+      window.addEventListener("mousedown", function (e) {
+        init();
+      });
+
+      /**
+       * 小球
+       *
+       * @param {*} x 中心的 x 坐标
+       * @param {*} y 中心的 y 坐标
+       * @param {*} speedy 速度 y , 变量因子
+       * @param {*} radius 半径
+       * @param {*} color 颜色
+       */
+      function Ball(x, y, speedx, speedy, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.speedx = speedx;
+        this.speedy = speedy;
+        this.radius = radius;
+        this.minRadius = radius;
+        this.maxRadius = 50;
+        this.color = color;
+      }
+
+      Ball.prototype.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      };
+
+      let Gravity = 0.8;
+      let Friction = 0.9;
+
+      Ball.prototype.update = function () {
+        if (this.y + this.radius + this.speedy + Gravity > canvas.height) {
+          // 每次接触地面时 反向且损失速度
+          this.speedy = -this.speedy;
+          this.speedy *= Friction;
+          this.speedx *= Friction;
+        } else {
+          // 在空中受到重力加速度的影响，速度增加
+          this.speedy += Gravity;
+        }
+
+        if (
+          this.x + this.radius + this.speedx >= canvas.width ||
+          this.x - this.radius + this.speedx <= 0
+        ) {
+          this.speedx = -this.speedx;
+        }
+
+        this.x += this.speedx;
+        this.y += this.speedy;
+        this.draw();
+      };
+
+      let ballArray = [];
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ballArray.map((item) => item.update());
+      }
+
+      function init() {
+        ballArray = [];
+        for (let i = 0; i < 200; i++) {
+          let x = Math.random() * canvas.width;
+          let y = Math.random() * canvas.height;
+          // 确保x方向初始时有左有右
+          let speedx = Math.random() * 10 - 5;
+          // y方向初始时向下
+          let speedy = Math.random() * 4 + 4;
+          let radius = Math.random() * 10 + 5;
+          let color = colorArray[Math.floor(Math.random() * 5)];
+          let ball = new Ball(x, y, speedx, speedy, radius, color);
+          ballArray.push(ball);
+        }
+      }
+
+      init();
+      animate();
+    </script>
+  </body>
+</html>

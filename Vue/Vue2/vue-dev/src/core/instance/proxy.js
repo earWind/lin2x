@@ -39,6 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
 
   if (hasProxy) {
     const isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact')
+    // 为config.keyCodes设置一个代理，在set赋值的时候先从isBuiltInModifier里检查，不存在再赋值
     config.keyCodes = new Proxy(config.keyCodes, {
       set (target, key, value) {
         if (isBuiltInModifier(key)) {
@@ -82,8 +83,10 @@ if (process.env.NODE_ENV !== 'production') {
       const handlers = options.render && options.render._withStripped
         ? getHandler
         : hasHandler
+      // 代理 
       vm._renderProxy = new Proxy(vm, handlers)
     } else {
+      // 这也代理
       vm._renderProxy = vm
     }
   }

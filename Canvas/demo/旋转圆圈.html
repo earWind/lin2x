@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const colorArray = [
+        "#4CBF88",
+        "#F2B134",
+        "#6F4A70",
+        "#FF6275",
+        "#00B5C4",
+      ];
+
+      canvas.setAttribute("width", W);
+      canvas.setAttribute("height", H);
+
+      window.addEventListener("resize", (e) => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+      });
+
+      // 鼠标位置
+      const mouse = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      };
+
+      window.addEventListener("mousemove", function (e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      /**
+       * 小球
+       *
+       * @param {*} x 中心的 x 坐标
+       * @param {*} y 中心的 y 坐标
+       * @param {*} width 线宽
+       * @param {*} color 颜色
+       */
+      function Ball(x, y, width, color) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.color = color;
+        this.angle = Math.random() * (2 * Math.PI); // 角度
+        this.distance = Math.random() * 20 + 70; // 圆心距
+        this.speed = 0.05;
+        // 拖拽
+        this.dragSpeed = 0.05;
+        this.lastMouse = {
+          x: x,
+          y: y,
+        };
+      }
+
+      Ball.prototype.draw = function (lastPosition) {
+        ctx.beginPath();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.width;
+        ctx.moveTo(lastPosition.x, lastPosition.y);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+        ctx.closePath();
+      };
+
+      Ball.prototype.update = function () {
+        // 记录前一个位置
+        const lastPosition = {
+          x: this.x,
+          y: this.y,
+        };
+
+        // 拖拽效果
+        this.lastMouse.x += (mouse.x - this.lastMouse.x) * this.dragSpeed;
+        this.lastMouse.y += (mouse.y - this.lastMouse.y) * this.dragSpeed;
+
+        this.x = this.lastMouse.x + Math.cos(this.angle) * this.distance;
+        this.y = this.lastMouse.y + Math.sin(this.angle) * this.distance;
+
+        this.angle += this.speed;
+        this.draw(lastPosition);
+      };
+
+      let ballArray = [];
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // 每一帧都给之前的帧蒙上一层白色透明的矩形 -- 尾巴
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ballArray.map((item) => item.update());
+      }
+
+      function init() {
+        ballArray = [];
+        for (let i = 0; i < 50; i++) {
+          let x = canvas.width / 2;
+          let y = canvas.height / 2;
+          let width = 3;
+          let color = colorArray[Math.floor(Math.random() * 5)];
+          let ball = new Ball(x, y, width, color);
+          ballArray.push(ball);
+        }
+      }
+
+      init();
+      animate();
+    </script>
+  </body>
+</html>

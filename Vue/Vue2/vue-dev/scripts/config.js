@@ -215,6 +215,7 @@ const builds = {
 
 function genConfig (name) {
   const opts = builds[name]
+  console.log('入口文件（entry）:',opts.entry)
   const config = {
     input: opts.entry,
     external: opts.external,

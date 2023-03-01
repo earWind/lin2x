@@ -1,0 +1,25 @@
+# 1
+POST http://localhost:3000/home/addDogRequest
+Content-Type: application/json
+
+{
+  "name": "可可"
+}
+
+# 2
+# GET http://localhost:3000/home/getDogById?id=2
+
+# 3
+# GET http://localhost:3000/home/findDogById/2/小白
+
+# 4
+# http://localhost:3000/home/deleteDog/4
+
+# 5
+# http://localhost:3000/home/updateDog/5
+
+# 6
+# http://localhost:3000/home/getDogs
+
+# 7
+# http://localhost:3000/home/findDogByName/小

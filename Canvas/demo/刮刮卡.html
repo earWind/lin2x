@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        margin: 100px auto;
+        position: relative;
+        width: 600px;
+        user-select: none;
+      }
+      .tips {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        text-align: center;
+        line-height: 200px;
+        color: deeppink;
+        font-size: 32px;
+      }
+      #canvas {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* background: url("https://www.huanggr.cn/wp-content/uploads/2018/08/u15720805482276536717fm26gp0-220x150.jpg"); */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="tips">谢谢惠顾</div>
+      <canvas id="canvas" width="600" height="200"></canvas>
+    </div>
+
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "gray";
+      ctx.fillRect(0, 0, 600, 200);
+      ctx.font = "20px 微软雅黑";
+      ctx.fillStyle = "#fff";
+      ctx.fillText("刮刮卡", 270, 110);
+
+      let isDraw = false;
+      // 鼠标按下允许绘制
+      canvas.onmousedown = function (e) {
+        isDraw = true;
+
+        const x = e.offsetX;
+        const y = e.offsetY;
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.lineWidth = 20;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.moveTo(x, y);
+      };
+      // 鼠标移动
+      canvas.onmousemove = function (e) {
+        if (isDraw) {
+          const x = e.offsetX;
+          const y = e.offsetY;
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+      };
+      // 鼠标离开
+      canvas.onmouseup = function () {
+        isDraw = false;
+      };
+
+      // 设置奖品
+      const prize = ["一等奖", "二等奖", "三等奖", "谢谢惠顾"];
+      const tips = document.querySelector(".tips");
+      tips.innerHTML = prize[Math.floor(Math.random() * 4)];
+    </script>
+  </body>
+</html>

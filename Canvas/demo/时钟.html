@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        width: 460px;
+        height: 460px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
+        margin: 20px auto;
+        border-radius: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="canvas" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+
+      const clock = {
+        radius: canvas.width / 2,
+        init() {
+          this.update();
+          setInterval(() => this.update(), 1000);
+        },
+        update() {
+          const { hours, minutes, seconds } = this.getTime();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // 保存当前状态
+          ctx.save();
+          // 将原点坐标移动到画布中央
+          ctx.translate(this.radius, this.radius);
+
+          this.drawDish();
+          this.drawNumber();
+          ctx.rotate((-180 * Math.PI) / 180);
+          this.drawScale();
+          this.drawSecondLine(seconds);
+          this.drawMenuteLine(minutes);
+          this.drawHourLine(hours);
+          this.drawCenterPointer();
+
+          ctx.restore();
+        },
+        drawDish() {
+          // 绘制表盘
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = "#ffffff";
+          ctx.fill();
+          ctx.closePath();
+        },
+        drawNumber() {
+          // 时间数字
+          const hourNumber = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2];
+          for (let i = 0; i < 12; i++) {
+            const angle = ((30 * Math.PI) / 180) * i;
+            const x = (this.radius - 40) * Math.cos(angle);
+            const y = (this.radius - 40) * Math.sin(angle);
+            ctx.save();
+            ctx.beginPath();
+            ctx.font = "18px sans-serif";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(hourNumber[i], x, y);
+            ctx.closePath();
+            ctx.restore();
+          }
+        },
+        drawScale() {
+          // 绘制分钟刻度
+          for (let i = 0; i < 60; i++) {
+            ctx.rotate((6 * Math.PI) / 180);
+            ctx.beginPath();
+            ctx.moveTo(180, 0);
+            ctx.lineTo(190, 0);
+            ctx.strokeStyle = "#FA5858";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+          }
+
+          // 绘制时钟刻度
+          for (let i = 0; i < 12; i++) {
+            ctx.beginPath();
+            ctx.rotate((30 * Math.PI) / 180);
+            ctx.moveTo(180, 0);
+            ctx.lineTo(200, 0);
+            ctx.strokeStyle = "#A9BCF5";
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            ctx.closePath();
+          }
+        },
+        drawCenterPointer() {
+          // 中间小圆圈
+          ctx.beginPath();
+          ctx.arc(0, 0, 12, 0, 2 * Math.PI);
+          ctx.fillStyle = "#333";
+          ctx.fill();
+          ctx.closePath();
+
+          ctx.beginPath();
+          ctx.arc(0, 0, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = "#666";
+          ctx.fill();
+          ctx.closePath();
+        },
+        drawHourLine(hours) {
+          // 时针
+          ctx.save();
+          ctx.beginPath();
+          ctx.rotate((hours * 30 * Math.PI) / 180);
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, this.radius / 1.8);
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = "red";
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.closePath();
+          ctx.restore();
+        },
+        drawMenuteLine(minutes) {
+          // 分针
+          ctx.save();
+          ctx.beginPath();
+          ctx.rotate((minutes * 6 * Math.PI) / 180);
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, this.radius / 1.5);
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "orange";
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.closePath();
+          ctx.restore();
+        },
+        drawSecondLine(seconds) {
+          // 秒针
+          ctx.save();
+          ctx.beginPath();
+          ctx.rotate((seconds * 6 * Math.PI) / 180);
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, this.radius / 1.2);
+          ctx.lineWidth = 2;
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.closePath();
+          ctx.restore();
+        },
+        getTime() {
+          const time = new Date();
+          const hours = time.getHours();
+          const minutes = time.getMinutes();
+          const seconds = time.getSeconds();
+          return {
+            hours: hours > 12 ? hours - 12 : hours,
+            minutes,
+            seconds,
+          };
+        },
+      };
+
+      clock.init();
+    </script>
+  </body>
+</html>

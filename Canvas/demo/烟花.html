@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+
+      const fireworks = {
+        sparkCount: 100, // 火花数量
+        sparkRadius: 2, // 火花初始环绕半径
+        gravity: 0.8, // 重力
+        friction: 0.99, // 空气阻力
+        init() {
+          this.resize();
+          this.bindEvent();
+          this.clear();
+        },
+        resize() {
+          canvas.width = canvas.offsetWidth;
+          canvas.height = canvas.offsetHeight;
+        },
+        clear() {
+          ctx.fillStyle = "#000000";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        },
+        bindEvent() {
+          // 鼠标点击
+          canvas.onmousedown = (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            this.createSpark(x, y);
+          };
+          // resize
+          window.addEventListener(
+            "resize",
+            () => {
+              this.resize();
+              this.clear();
+            },
+            false
+          );
+        },
+        createSpark(mouseX, mouseY) {
+          // 火花
+          const sparkArray = [];
+          for (let i = 0; i < this.sparkCount; i++) {
+            const angle = (Math.random() * 360 * Math.PI) / 180;
+            const x = mouseX + Math.cos(angle) * this.sparkRadius;
+            const y = mouseY + Math.sin(angle) * this.sparkRadius;
+            const spark = {
+              lastX: x,
+              lastY: y,
+              angle,
+              speed: Math.random() * 2 + 1, // 初始速度
+              radius: 6,
+              hue: Math.floor(Math.random() * 30) + 10,
+              brightness: Math.floor(Math.random() * 31) + 50,
+              alpha: (Math.floor(Math.random() * 61) + 40) / 100,
+            };
+            sparkArray.push(spark);
+          }
+          this.drawSpark(sparkArray);
+        },
+        drawSpark(arr) {
+          const sparkArray = [];
+          // 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画
+          requestAnimationFrame(() => {
+            this.clear();
+            // 尾巴？？？
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "lighter";
+
+            this.drawSpark(sparkArray);
+          });
+          arr.map((item) => {
+            const speed = this.friction * item.speed;
+            const radius = (item.radius *= 1 - item.speed / 100);
+            const x = item.lastX + Math.cos(item.angle) * speed;
+            const y = item.lastY + Math.sin(item.angle) * speed + this.gravity;
+
+            ctx.beginPath();
+            ctx.fillStyle =
+              "hsla(" +
+              item.hue +
+              ", 100%, " +
+              item.brightness +
+              "%, " +
+              item.alpha +
+              ")";
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+
+            const spark = {
+              lastX: x,
+              lastY: y,
+              speed,
+              radius,
+              alpha: item.alpha - 0.005,
+            };
+            sparkArray.push(Object.assign(item, spark));
+          });
+        },
+      };
+      fireworks.init();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>这个是用来 测试方法到底怎么用，有什么用的</title>
+  </head>
+  <body>
+    <script src="./utils.js"></script>
+    <script>
+      const a = {
+        age: 0,
+        b: {
+          age: 1,
+        },
+      };
+      const c = {
+        age: 2,
+        d: {
+          age: 3,
+          e:{
+            age: 4
+          }
+        },
+      };
+
+      console.log(merge(a, c));
+    </script>
+  </body>
+</html>

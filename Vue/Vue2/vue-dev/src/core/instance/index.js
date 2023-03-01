@@ -3,25 +3,53 @@ import { stateMixin } from "./state";
 import { renderMixin } from "./render";
 import { eventsMixin } from "./events";
 import { lifecycleMixin } from "./lifecycle";
-// import { warn } from '../util/index'
+import { warn } from "../util/index";
 
 // vue构造函数
 function Vue(options) {
-  // ignore 以后这种 非功能性代码 我都注释掉，避免影响阅读
-  // if (process.env.NODE_ENV !== 'production' &&
-  //   !(this instanceof Vue)
-  // ) {
-  //   warn('Vue is a constructor and should be called with the `new` keyword')
-  // }
-  /* 初始化 vue */
+  // ignore 异常提示
+  if (process.env.NODE_ENV !== "production" && !(this instanceof Vue)) {
+    warn("Vue is a constructor and should be called with the `new` keyword");
+  }
+  // 调用 Vue.prototype._init 方法，该方法是在 initMixin 中定义的
   this._init(options);
 }
 
-/* 在Vue的原型上增加_init方法，构造Vue实例的时候会调用这个_init方法来初始化Vue实例 */
+// 定义 Vue.prototype._init 方法
 initMixin(Vue);
+
+// 以下都是添加实例方法
+/**
+ * 定义：
+ *   Vue.prototype.$data
+ *   Vue.prototype.$props
+ *   Vue.prototype.$set
+ *   Vue.prototype.$delete
+ *   Vue.prototype.$watch
+ */
 stateMixin(Vue);
+/**
+ * 定义 事件相关的 方法：
+ *   Vue.prototype.$on
+ *   Vue.prototype.$once
+ *   Vue.prototype.$off
+ *   Vue.prototype.$emit
+ */
 eventsMixin(Vue);
+/**
+ * 定义：
+ *   Vue.prototype._update
+ *   Vue.prototype.$forceUpdate
+ *   Vue.prototype.$destroy
+ */
 lifecycleMixin(Vue);
+/**
+ * 执行 installRenderHelpers，在 Vue.prototype 对象上安装运行时便利程序
+ *
+ * 定义：
+ *   Vue.prototype.$nextTick
+ *   Vue.prototype._render
+ */
 renderMixin(Vue);
 
 export default Vue;
