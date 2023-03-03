@@ -2,6 +2,10 @@
 
 源码位置 `packages\reactivity\src\ref.ts`
 
+<!-- 
+  副作用函数是在 render 或者 watch 时触发搜集
+ -->
+
 ## RefImpl
 
 ```js
