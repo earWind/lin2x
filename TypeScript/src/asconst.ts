@@ -3,7 +3,7 @@
   // as const 是 TS 的语法，它告诉 TS 它所断言的值以及该值的所有层级的子属性都是不可篡改的，故对每一级子属性都会做最严格的类型推断
 
   // 对象
-  const constStyle = {
+  const style = {
     psychodelic: {
       "magical-mystery-tour": 1967,
       "the-piper-at-the-gates-of-dawn": 1967,
@@ -15,17 +15,17 @@
   } as const;
 
   // 数组
-  const constSizes = ["", "default", "small", "large"] as const;
-  type ConstSizes = typeof constSizes[number];
+  const sizes = ["", "default", "small", "large"] as const;
+  type Sizes = typeof sizes[number];
 
   // 枚举
-  const constEnum = {
+  const env = {
     Development: "dev",
     Production: "prod",
     Testing: "test",
   } as const;
   // type ValueOf<T> = T[keyof T];
   // type ConstEnum = ValueOf<typeof constEnum>;
-  type ConstEnum = typeof constEnum["Development"];
-  const env: ConstEnum = "dev";
+  type Dev = typeof env["Development"];
+  const dev: Dev = "dev";
 }
