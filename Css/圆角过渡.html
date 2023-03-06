@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul {
+        display: flex;
+        flex-direction: column;
+        background: pink;
+        padding: 0;
+        margin: 0;
+        width: 200px;
+        padding-left: 10px;
+      }
+
+      li {
+        width: 200px;
+        height: 42px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .active {
+        background-color: white;
+        border-top-left-radius: 21px;
+        border-bottom-left-radius: 21px;
+        color: red;
+      }
+
+      .active::after,
+      .active::before {
+        content: '';
+        display: block;
+        height: 21px;
+        width: 21px;
+        position: absolute;
+        right: 0;
+        background: radial-gradient(21px at 21px 0px, transparent 21px, white 21px);
+      }
+
+      .active::before {
+        bottom: -21px;
+        transform: scale(-1);
+      }
+
+      .active::after {
+        top: -21px;
+        transform: scaleX(-1);
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li>1</li>
+      <li class="active">2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+    </ul>
+  </body>
+</html>
