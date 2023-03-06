@@ -5,39 +5,34 @@ let obj = {
   count: 0,
 };
 
-/**
- * target 代理对象
- * proxy 相当于一层拦截器
- */
+// 响应式数据 -- 当数据改变会自动触发使用改变量的方法
 let proxyObj = new Proxy(obj, {
   get(target, key, receiver) {
     effects.add(effect);
-    console.log("get:", target, key);
     const ret = Reflect.get(target, key, receiver);
-    // return 1;
     return ret;
   },
   set(target, key, value, receiver) {
-    console.log("set:", target, key);
     const ret = Reflect.set(target, key, value, receiver);
     effects.forEach((fn) => fn());
     return ret;
   },
 });
 
-// 对obj操作不会触发set get
-// obj.count++
-// proxyObj.count++;
-
-// 读取不会触发set get
-// console.log(obj, proxyObj);
-
+// 副作用函数 -- 如果一个函数的运行，可能会影响到其他函数或变量，那么这种影响就是一种副作用
 function effect() {
-  console.log(proxyObj);
+  console.log("trigger count effect");
   document.getElementById("app").innerText = proxyObj.count;
 }
 effect();
 
 setTimeout(() => {
-  proxyObj.count = 1111;
+  proxyObj.count = 1;
+  // proxyObj.text = 1;
 }, 3000);
+
+/**
+ * 思考
+ * 1.effect是一个写死的方法
+ * 2.改变proxyObj其他属性也会触发副作用函数（如：proxyObj.text = 'hello'）
+ */
