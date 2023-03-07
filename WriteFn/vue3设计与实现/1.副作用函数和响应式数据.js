@@ -1,3 +1,9 @@
+/**
+ * 思考
+ * 1.什么是响应式数据
+ * 2.什么是副作用函数
+ */
+
 // 收集副作用函数
 let effects = new Set();
 
@@ -30,9 +36,3 @@ setTimeout(() => {
   proxyObj.count = 1;
   // proxyObj.text = 1;
 }, 3000);
-
-/**
- * 思考
- * 1.effect是一个写死的方法
- * 2.改变proxyObj其他属性也会触发副作用函数（如：proxyObj.text = 'hello'）
- */
