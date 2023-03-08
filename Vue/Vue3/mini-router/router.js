@@ -1,5 +1,8 @@
 /**
- * 测试时手动更改路由地址
+ * 原理：
+ *  1.监听URL改变
+ *  2.找到URL对应的组件，然后渲染
+ * 参考：https://www.bilibili.com/video/BV14y4y1C7F2/?spm_id_from=333.337.search-card.all.click&vd_source=882cc41e5b4d1de7ca7d872e4b8a766f
  */
 
 const { defineComponent, h, ref, getCurrentInstance } = Vue;
