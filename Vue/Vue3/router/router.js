@@ -2,7 +2,7 @@
  * 测试时手动更改路由地址
  */
 
-const { defineComponent, h, ref } = Vue;
+const { defineComponent, h, ref, getCurrentInstance } = Vue;
 
 const RouterLink = defineComponent({
   name: "RouterLink",
@@ -18,6 +18,10 @@ const RouterLink = defineComponent({
         "a",
         {
           href: props.to,
+          onclick: (e) => {
+            e.preventDefault();
+            location.replace(location.pathname + "#" + props.to);
+          },
         },
         slots.default()
       );
@@ -28,9 +32,11 @@ const RouterLink = defineComponent({
 const RouterView = defineComponent({
   name: "RouterView",
   inheritAttrs: false,
-  setup(props, { slots }) {
+  setup() {
+    const { proxy } = getCurrentInstance();
+
     return () => {
-      const { routes, current } = VueRouter;
+      const { routes, current } = proxy.$router;
 
       let component;
       for (let i = 0; i < routes.length; i++) {
@@ -56,7 +62,6 @@ const VueRouter = {
     return this;
   },
   install(app) {
-    // 怎么在RouterView中获取$router
     const router = this;
     app.config.globalProperties.$router = router;
 
