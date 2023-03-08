@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      a {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/vue-router@4"></script>
+    <script src="./index.js"></script>
+
+    <div id="app">
+      <p>
+        <!--使用 router-link 组件进行导航 -->
+        <!--通过传递 `to` 来指定链接 -->
+        <!--`<router-link>` 将呈现一个带有正确 `href` 属性的 `<a>` 标签-->
+        <router-link to="/">Go to Home</router-link>
+        <router-link to="/about">Go to About</router-link>
+      </p>
+      <!-- 路由出口 -->
+      <!-- 路由匹配到的组件将渲染在这里 -->
+      <router-view></router-view>
+
+      <hr>
+
+      <p>
+        <router-link to="/vue-app">vue-app</router-link>
+        <router-link to="/react-app">react-app</router-link>
+      </p>
+
+      <div id="microapp"></div>
+    </div>
+
+    <script>
+      // 1. 定义路由组件.
+      // 也可以从其他文件导入
+      const Home = { template: "<div>Home</div>" };
+      const About = { template: "<div>About</div>" };
+
+      // 2. 定义一些路由
+      // 每个路由都需要映射到一个组件。
+      // 我们后面再讨论嵌套路由。
+      const routes = [
+        { path: "/", component: Home },
+        { path: "/about", component: About },
+        { path: "/vue-app", component: Home },
+        { path: "/react-app", component: Home },
+      ];
+
+      // 3. 创建路由实例并传递 `routes` 配置
+      // 你可以在这里输入更多的配置，但我们在这里
+      // 暂时保持简单
+      const router = VueRouter.createRouter({
+        // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
+        history: VueRouter.createWebHashHistory(),
+        routes, // `routes: routes` 的缩写
+      });
+
+      // 5. 创建并挂载根实例
+      const app = Vue.createApp({});
+      //确保 _use_ 路由实例使
+      //整个应用支持路由。
+      app.use(router);
+
+
+      registerMicroApps([
+        {
+          name: "vue",
+          entry: "./vue.html", // 子应用入口
+          container: "#microapp", // 渲染位置
+          activeRule: "/vue-app", // 匹配规则
+        },
+        {
+          name: "react",
+          entry: "./react.html",
+          container: "#microapp", 
+          activeRule: "/react-app", 
+        },
+      ]);
+      start();
+
+
+      app.mount("#app");
+
+
+      // 现在，应用已经启动了！
+    </script>
+  </body>
+</html>
