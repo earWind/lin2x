@@ -11,16 +11,50 @@
 
     <div id="app">{{ message }}</div>
 
-    <script>
+    <script type="module">
       const { createApp } = Vue;
 
-      createApp({
-        data() {
-          return {
-            message: "Hello Vue!",
-          };
-        },
-      }).mount("#app");
+      let app = null;
+
+      function render(props) {
+        app = createApp({
+          data() {
+            return {
+              message: "Hello Vue!",
+            };
+          },
+        })
+        app.mount(props.container);
+      }
+
+      /**
+       * 子应用接入micro
+       * 导出三个声明周期函数
+       */
+
+      //  1.渲染前
+      async function bootstrap() {
+        console.log("vue app bootstrap");
+      }
+
+      // 2.渲染函数
+      async function mount(props) {
+        console.log("vue app mount");
+        render(props)
+      }
+
+      // 3.卸载函数
+      async function unmount() {
+        console.log("vue app unmount");
+        app.unmount();
+      }
+
+      // 向外暴露的周期函数
+      window.exports = {
+        bootstrap,
+        mount,
+        unmount,
+      };
     </script>
   </body>
 </html>

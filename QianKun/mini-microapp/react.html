@@ -7,10 +7,16 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="like_button_container"></div>
+    <!-- <div id="like_button_container"></div> -->
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
 
     <script>
       const e = React.createElement;
@@ -29,14 +35,47 @@
           return e(
             "button",
             { onClick: () => this.setState({ liked: true }) },
-            "Like"
+            "Hello React!"
           );
         }
       }
 
-      const domContainer = document.querySelector("#like_button_container");
-      const root = ReactDOM.createRoot(domContainer);
-      root.render(e(LikeButton));
+      let root = null;
+
+      function render(props) {
+        // const domContainer = document.querySelector("#like_button_container");
+        root = ReactDOM.createRoot(props.container);
+        root.render(e(LikeButton));
+      }
+
+      /**
+       * 子应用接入micro
+       * 导出三个声明周期函数
+       */
+
+      //  1.渲染前
+      async function bootstrap() {
+        console.log("react app bootstrap");
+      }
+
+      // 2.渲染函数
+      async function mount(props) {
+        console.log("react app mount");
+        render(props)
+      }
+
+      // 3.卸载函数
+      async function unmount() {
+        console.log("react app unmount");
+        root.unmount()
+      }
+
+      // 向外暴露的周期函数
+      window.exports = {
+        bootstrap,
+        mount,
+        unmount,
+      };
     </script>
   </body>
 </html>
