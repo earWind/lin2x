@@ -24,6 +24,8 @@ age = 18
 hasMoney = False
 books = ['老人与海', '悲惨世界', '西游记']
 
+print(age)
+
 
 # if name == '屈小佩' and hasMoney:
 #     print(name + '有钱')
