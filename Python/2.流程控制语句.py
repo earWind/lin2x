@@ -41,12 +41,14 @@ def http_status(status):
 
 print(http_status(404))
 
-# 定义函数，定义 函数使用关键字 def
-
-# 斐波那契数列
+# 定义函数，定义 函数使用关键字 def，定义返回数据类型 -> list
 
 
 def fib(n=2000) -> list:
+    """
+      斐波那契数列
+      :param n: number
+    """
     a, b, res = 0, 1, []
 
     while a < n:
@@ -58,5 +60,38 @@ def fib(n=2000) -> list:
 
 print(fib())
 
-
 # 形参为 **name 形式时，接收一个字典；*name 形参接收一个 元组
+
+# 函数多返回值
+
+
+def moreRes():
+    return 1, 2
+
+
+a, b = moreRes()
+
+# 函数关键字传参
+
+
+def user_info(name, age, gender):
+    return f'{name} +{age}+{gender}'
+
+
+user_info(name='Jack', age=16, gender='女')
+# 参数顺序不重要
+user_info(gender='女', name='Jack', age=16)
+
+# 匿名函数
+
+
+def sum(fnc):
+    return fnc(1, 2)
+
+
+def add(a, b):
+    return a+b
+
+
+print(sum(add))
+print(sum(lambda x, y: x + y))

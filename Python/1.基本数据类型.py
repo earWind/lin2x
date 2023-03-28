@@ -10,6 +10,7 @@ c = 'str'
 print(c[1])
 # len内置方法可获取长度
 print(len(c))
+print(f'a={a},b={b}')
 
 # 3.列表
 d = [1, 2]
