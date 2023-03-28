@@ -2,9 +2,10 @@
 
 ## tow
 
-### 安装包
+### 安装包 & 文档
 
-[download](https://www.python.org/downloads/)
+[下载](https://www.python.org/downloads/)
+[文档](https://docs.python.org/zh-cn/3/)
 
 ### pip 使用国内镜像源
 
