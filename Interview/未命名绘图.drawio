@@ -1,9 +1,15 @@
-<mxfile host="app.diagrams.net" modified="2023-04-03T06:23:34.229Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36" version="21.1.2" etag="uSbA6-swr_HwN3SkC16H" type="github">
+<mxfile host="app.diagrams.net" modified="2023-04-03T06:25:36.477Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36" etag="8cHtH-KMM4ep4lUuTY4f" version="21.1.2" type="github">
   <diagram name="第 1 页" id="JxtdO-VlgjRn1bFwfiIR">
-    <mxGraphModel>
+    <mxGraphModel dx="1434" dy="764" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="J3xKOFyV-tupJ7J3MzHj-5" value="主线" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="230" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="J3xKOFyV-tupJ7J3MzHj-8" value="趋势" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
