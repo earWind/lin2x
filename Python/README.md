@@ -26,3 +26,9 @@ import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 ```
+
+### Python 完美解决 Import 'xx' could not be resolved resolvedPylance
+
+1. 打开 vscode
+2. 按快捷键 win: Ctrl + Shift + P 或 mac: Command + Shift + P，输入 Python: Select Interpreter
+3. 选择对应的python版本
