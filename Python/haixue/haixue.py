@@ -1,7 +1,3 @@
-"""
-  https://doc.itprojects.cn/0001.zhishi/python.0008.pyqt5rumen/index.html#/README
-"""
-
 import requests as rq
 from requests.cookies import RequestsCookieJar
 import json
@@ -9,54 +5,80 @@ import ddddocr
 import io
 import sys
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import ECB
 import random
 
 # 解决 print 乱码
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
+key = 'ja72jks98x72masx'
 gl_user_info = {}
 
 
 def get_haixue_web():  # 获取登录页
-    driver = webdriver.Chrome()
-    url = "http://k2.haixue.com/user/login"
-    driver.get(url)
-    # 获取cookie列表
-    cookie_list = driver.get_cookies()
-    # 格式化打印cookie
-    cookie_dict = {}
-    for cookie in cookie_list:
-        cookie_dict[cookie['name']] = cookie['value']
-    return cookie_dict
+    try:
+        opt = Options()
+        opt.add_experimental_option('excludeSwitches', ['enable-automation'])
+        # 无头浏览器
+        opt.add_argument('--headless')
+        # 创建浏览器对象
+        web = webdriver.Chrome(options=opt)
+        url = "http://k2.haixue.com/user/login"
+        web.get(url)
+        # 获取cookie列表
+        cookie_list = web.get_cookies()
+        # 格式化打印cookie
+        cookie_dict = {}
+        for cookie in cookie_list:
+            cookie_dict[cookie['name']] = cookie['value']
+        return cookie_dict
+    except:
+        return 'error'
 
 
 def get_captcha():  # 获取验证码
-    r = rq.get('https://ucenter.haixue.com/common/captcha')
+    try:
+        r = rq.get('https://ucenter.haixue.com/common/captcha')
+        if r.status_code == 200:
+            cookie = rq.utils.dict_from_cookiejar(r.cookies)
+            print(cookie)
+            ocr = ddddocr.DdddOcr()
+            print(ocr)
+            captcha = ocr.classification(r.content)
+            print(captcha)
+            _cookie = {
+                "__jsluid_h": cookie['__jsluid_s'],
+                "captcha-uuid": cookie['captcha-uuid']
+            }
+            return [captcha, _cookie]
 
-    if r.status_code == 200:
-        cookie = rq.utils.dict_from_cookiejar(r.cookies)
-        ocr = ddddocr.DdddOcr()
-        captcha = ocr.classification(r.content)
-        _cookie = {
-            "__jsluid_h": cookie['__jsluid_s'],
-            "captcha-uuid": cookie['captcha-uuid']
-        }
-        return captcha, _cookie
-
-        # with open('D:\_git\lin2x\Python\demo\captcha.jpg', 'rb') as f:
-        #     img_bytes = f.read()
-        #     captcha = ocr.classification(img_bytes)
-        #     print(captcha)
-        # return captcha, {"__jsluid_h": cookie['__jsluid_s'],"captcha-uuid": cookie['captcha-uuid']}
+            # with open('D:\_git\lin2x\Python\demo\captcha.jpg', 'rb') as f:
+            #     img_bytes = f.read()
+            #     captcha = ocr.classification(img_bytes)
+            #     print(captcha)
+            # return captcha, {"__jsluid_h": cookie['__jsluid_s'],"captcha-uuid": cookie['captcha-uuid']}
+    except:
+        return 'error'
 
 
-def login():  # 登录
+def login(user_name, pass_word):  # 登录
     web_cookie = get_haixue_web()
-    captcha, captcha_cookie = get_captcha()
+    if web_cookie == 'error':
+        return 'get_haixue_web error'
+
+    captcha_r = get_captcha()
+    if captcha_r == 'error':
+        return 'get_captcha error'
+
+    captcha = captcha_r[0]
+    captcha_cookie = captcha_r[1]
+
+    user_name = ECB.aesEncrypt(key, user_name)
+    pass_word = ECB.aesEncrypt(key, pass_word)
     data = {
-        "userName": "S9pzRSQK9i2UVDHkEwvqhw==",
-        "passWord": "pdQiKTwuxSrVGOPOYK/v5Q==",
+        "userName": user_name,
+        "passWord": pass_word,
         "systemCode": "crm",
         "verifyCode": captcha
     }
@@ -103,17 +125,25 @@ def login():  # 登录
         cookie = rq.utils.dict_from_cookiejar(r.cookies)
         next_cookie = dict(cookie, **pre_cookie)
 
-        handle_login(next_cookie)
+        log_list = handle_login(next_cookie)
+        return log_list
+    else:
+        return 'login error'
 
 
 def handle_login(cookie):  # 处理登录成功后的逻辑
     list_data = get_chance_list(cookie)
+
+    if isinstance(list_data, str):
+        print(list_data)
+        list_data = json.loads(list_data)
+
     totalNum = list_data['totalNum']
     totalPage = list_data['totalPage']
 
     # 获取机会列表，先判断最后一页有多少条，小于4的话就取倒数第二页
     if totalNum % totalPage < 4:
-        list_data = get_chance_list(cookie, totalPage-1)
+        list_data = get_chance_list(cookie, totalPage - 1)
     else:
         list_data = get_chance_list(cookie, totalPage)
 
@@ -128,12 +158,10 @@ def handle_login(cookie):  # 处理登录成功后的逻辑
             msg = update_quote(cookie, item)
             num += 1
             log_list.append({'mobile': item['mobile'], 'msg': msg})
-    print(log_list)
+    return log_list
 
 
 def get_chance_list(cookie, page='1'):  # 获取机会列表
-    key = 'ja72jks98x72masx'
-
     """
       :微信添加状态 是
       :报价金额 倒序
@@ -203,7 +231,6 @@ def get_chance_list(cookie, page='1'):  # 获取机会列表
 
 
 def update_quote(cookies, row):  # 修改报价
-    key = 'ja72jks98x72masx'
     id = row['assignId']
     wxChanceId = row['wxChanceId']
     quote = row['quote']
@@ -244,5 +271,6 @@ def update_quote(cookies, row):  # 修改报价
 
 
 if __name__ == '__main__':
-    login()
+    # login('CD15714', '@QP888888')
     # print(gl_user_info)
+    print(get_haixue_web())
