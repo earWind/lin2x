@@ -42,11 +42,8 @@ def get_captcha():  # 获取验证码
         r = rq.get('https://ucenter.haixue.com/common/captcha')
         if r.status_code == 200:
             cookie = rq.utils.dict_from_cookiejar(r.cookies)
-            print(cookie)
             ocr = ddddocr.DdddOcr()
-            print(ocr)
             captcha = ocr.classification(r.content)
-            print(captcha)
             _cookie = {
                 "__jsluid_h": cookie['__jsluid_s'],
                 "captcha-uuid": cookie['captcha-uuid']
@@ -133,25 +130,20 @@ def login(user_name, pass_word):  # 登录
 
 def handle_login(cookie):  # 处理登录成功后的逻辑
     list_data = get_chance_list(cookie)
-
-    if isinstance(list_data, str):
-        print(list_data)
-        list_data = json.loads(list_data)
-
-    totalNum = list_data['totalNum']
-    totalPage = list_data['totalPage']
+    total_num = list_data['totalNum']
+    total_page = list_data['totalPage']
 
     # 获取机会列表，先判断最后一页有多少条，小于4的话就取倒数第二页
-    if totalNum % totalPage < 4:
-        list_data = get_chance_list(cookie, totalPage - 1)
+    if total_num % 20 < 4:
+        list_data = get_chance_list(cookie, str(total_page - 1))
     else:
-        list_data = get_chance_list(cookie, totalPage)
+        list_data = get_chance_list(cookie, str(total_page))
 
     items = list_data['items']
     num = 0
     log_list = []
     for item in items:
-        if not item['quotedMoney'] is None and num < 4:
+        if item['quotedMoney'] is None and num < 4:
             quote_temp = [1980, 2980, 3980, 4980, 5980]
             quote = random.choice(quote_temp)
             item['quote'] = quote
@@ -227,7 +219,11 @@ def get_chance_list(cookie, page='1'):  # 获取机会列表
     )
 
     if r.status_code == 200:
-        return json.loads(r.text)['data']
+        data = json.loads(r.text)['data']
+        if isinstance(data, str):
+            return json.loads(data)
+        else:
+            return data
 
 
 def update_quote(cookies, row):  # 修改报价
@@ -271,6 +267,7 @@ def update_quote(cookies, row):  # 修改报价
 
 
 if __name__ == '__main__':
-    # login('CD15714', '@QP888888')
+    r = login('CD15714', '@QP888888')
+    print(r)
     # print(gl_user_info)
-    print(get_haixue_web())
+    # print(get_haixue_web())
