@@ -40,9 +40,9 @@ MainWindow.setWindowIcon(QIcon(':/ico1.ico'))
 
 2. 打包
 
-执行 `pyinstaller -w -F main.py -p D:/soft/python-3.7/Lib/site-packages`；加上 `-w` 就是不程序运行时不显示命令行窗口
+执行 `pyinstaller -w -F main.py -p C:\Users\Administrator\AppData\Local\Programs\Python\Python39\Lib\site-packages`；加上 `-w` 就是不程序运行时不显示命令行窗口
 main.py 需要打的文件
-D:/soft/python-3.7/Lib/site-packages 自己电脑site-package路径
+C:\Users\Administrator\AppData\Local\Programs\Python\Python39\Lib\site-packages 自己电脑site-package路径
 
 3. 修改main.spec
 
