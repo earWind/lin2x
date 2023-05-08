@@ -53,4 +53,10 @@
     PUT = "put",
   }
   type Router = Record<Methods, (req: () => void, res: () => void) => void>;
+
+  // 8.ReturnType - 可以获取函数返回的数据类型
+  type TeacherA = typeof teacherA
+  type SetTimeout = typeof setTimeout
+  const time1: ReturnType<SetTimeout> = setTimeout(() => {}, 0);
+
 }

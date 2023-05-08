@@ -1,6 +1,6 @@
 {
-  // 泛型 类型通过使用的时候传入
-  function identity<T>(arg: T): T {
+  // 泛型 类型通过使用的时候传入，可以设置默认值 unknown
+  function identity<T = unknown>(arg: T): T {
     return arg;
   }
 

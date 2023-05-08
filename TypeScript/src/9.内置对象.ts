@@ -7,8 +7,6 @@
 
   const el: HTMLElement = document.createElement("div");
 
-  const time1: ReturnType<typeof setTimeout> = setTimeout(() => {}, 0);
-
   const promise: Promise<boolean> = new Promise<boolean>((resolve, reject) => {
     resolve(true);
   });

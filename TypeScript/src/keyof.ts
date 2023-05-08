@@ -12,4 +12,16 @@
   type Point = { x: number; y: number };
   type P2 = keyof Point; // 'x' | 'y'
   let p2: P2 = "x";
+
+  // typescript中使用 in 关键字来遍历联合类型
+  type key = 'vue' | 'react';
+  type MappedType = { [k in key]: string }
+
+  // clone
+  type Clone<S extends Person> = { [P in keyof Person ]: S[P] };
+
+  // 对于数组可以通过以下方式获取联合类型
+  type framework = ['vue', 'react', 'angular'];
+  type frameworkVal1 = framework[number]; // "vue" | "react" | "angular"
+
 }
