@@ -42,7 +42,7 @@
   // 11.object
   let obj: object = {};
 
-  // 12 symbol
+  // 12.symbol
 
   let sb: symbol = Symbol("sb");
 
@@ -50,4 +50,12 @@
   let someValue: any = "this is a string";
   let strLength1: number = (<string>someValue).length;
   let strLength2: number = (someValue as string).length;
+
+  // 13.对象 对象类型可以通过key获取类型值
+  type Student = {
+    age: number
+    class: string
+    like: string 
+  }
+  let myClass: Student['class'] = '六年级二班'
 }
