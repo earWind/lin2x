@@ -9,9 +9,9 @@ a = Analysis(
     pathex=['C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python39\\Lib\\site-packages'],
     binaries=[],
     datas=[
-      ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/onnxruntime/capi/onnxruntime_providers_shared.dll','onnxruntime\\capi'),
-      ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/ddddocr/common.onnx','ddddocr'),
-      ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/ddddocr/common_old.onnx','ddddocr')
+        ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/onnxruntime/capi/onnxruntime_providers_shared.dll','onnxruntime\\capi'),
+        ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/ddddocr/common.onnx','ddddocr'),
+        ('C:/Users/Administrator/AppData/Local/Programs/Python/Python39/Lib/site-packages/ddddocr/common_old.onnx','ddddocr')
     ],
     hiddenimports=[],
     hookspath=[],

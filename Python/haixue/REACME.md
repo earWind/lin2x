@@ -14,8 +14,11 @@
 ```
 
 保存,修改文件后缀为.qrc
+
 2. 生成py文件，这个py文件把图片保存成二进制
+
 `pyrcc5 -o images.py images.qrc`
+
 3. 导入模块
 
 ```py
@@ -55,3 +58,9 @@ C:\Users\Administrator\AppData\Local\Programs\Python\Python39\Lib\site-packages 
 ```
 
 然后执行 `pyinstaller main.spec`
+
+
+# webdriver.Chrome 报错
+python安装目录 print(sys.executable)
+[driver = webdriver.Chrome()报错](https://blog.csdn.net/weixin_42403127/article/details/85255891)
+[最新ChromeDriver下载](https://googlechromelabs.github.io/chrome-for-testing/)

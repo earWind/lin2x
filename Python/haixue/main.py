@@ -10,11 +10,13 @@ import images  # 这里是获取图标 images.py
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+import json
 
 
 class MyWindow(QWidget):
     # 声明一个信号 只能放在函数的外面
     my_signal = pyqtSignal(str)
+    use_info_path = r"D:\_git\lin2x\Python\haixue\userInfo.json"
 
     def __init__(self):
         super().__init__()
@@ -36,7 +38,7 @@ class MyWindow(QWidget):
         account_label = QLabel("账号", self)
         account_label.setGeometry(20, 20, 30, 30)
         account_edit = QLineEdit(self)
-        account_edit.setText('CD15714')
+        # account_edit.setText('CD15714')
         account_edit.setPlaceholderText("请输入账号")
         account_edit.setGeometry(60, 20, 200, 30)
         self.account_edit = account_edit
@@ -46,10 +48,16 @@ class MyWindow(QWidget):
         password_label.setGeometry(20, 60, 30, 30)
         password_edit = QLineEdit(self)
         password_edit.setEchoMode(QLineEdit.Password)
-        password_edit.setText('@QP888888')
+        # password_edit.setText('@qp88888888')
         password_edit.setPlaceholderText("请输入密码")
         password_edit.setGeometry(60, 60, 200, 30)
         self.password_edit = password_edit
+
+        # 记住的账号密码
+        load = json.load(open(self.use_info_path, 'r'))
+        if load:
+            account_edit.setText(load['account'])
+            password_edit.setText(load['password'])
 
         # 在窗口里面添加控件
         btn = QPushButton("确定", self)
@@ -107,16 +115,21 @@ class MyWindow(QWidget):
 
     def click_my_btn(self, arg):
         # 这里的参数正好是信号发出，传递的参数
-        print(arg)
+        print('click_my_btn', arg)
 
         t = get_now_time()
         self.my_signal.emit('开始时间：' + t)
 
         account = self.account_edit.text()
-        pass_word = self.password_edit.text()
-        if account and pass_word:
+        password = self.password_edit.text()
+        if account and password:
+            # 记住账号密码
+            dum = {"account": account, "password": password}
+            json.dump(
+                dum, open(self.use_info_path, 'w'), indent=4)
+
             try:
-                r = haixue.login(account, pass_word)
+                r = haixue.login(account, password)
                 if isinstance(r, str):
                     self.my_signal.emit(r)
                 else:
@@ -125,6 +138,8 @@ class MyWindow(QWidget):
             finally:
                 t = get_now_time()
                 self.my_signal.emit('结束时间：' + t)
+        else:
+            self.my_signal.emit('输入账号密码')
 
 
 def get_now_time():
@@ -136,4 +151,4 @@ if __name__ == '__main__':
     w = MyWindow()
     w.show()
     app.exec()
-    # haixue.login('CD15714', '@QP888888')
+    # haixue.login('CD15714', '@qp88888888')
