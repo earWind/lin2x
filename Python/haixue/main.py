@@ -7,7 +7,7 @@ import os
 import haixue
 import time
 import images  # 这里是获取图标 images.py
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import json
@@ -15,6 +15,7 @@ import json
 
 class MyWindow(QWidget):
     # 声明一个信号 只能放在函数的外面
+    loading = {}
     my_signal = pyqtSignal(str)
     use_info_path = r"D:\_git\lin2x\Python\haixue\userInfo.json"
 
@@ -94,6 +95,7 @@ class MyWindow(QWidget):
         h_layout.addWidget(password_edit)
         h_layout.addWidget(btn)
         h_layout.addStretch(1)
+        self.layout = h_layout
 
         # 操作将要显示的控件以及子布局器添加到container
         container.addLayout(v_layout)
@@ -114,6 +116,8 @@ class MyWindow(QWidget):
         self.msg.repaint()  # 更新内容，如果不更新可能没有显示新内容
 
     def click_my_btn(self, arg):
+        # self.start_loading()
+
         # 这里的参数正好是信号发出，传递的参数
         print('click_my_btn', arg)
 
@@ -141,6 +145,27 @@ class MyWindow(QWidget):
         else:
             self.my_signal.emit('输入账号密码')
 
+        # self.stop_loading()
+
+    # 启动加载提示框
+    def start_loading(self):
+        label = QLabel('')
+        self.layout.addWidget(label)
+        movie = QMovie('./assets/loading.gif')
+        label.setMovie(movie)
+        label.setGeometry(0, 0, 40, 20)
+        label.setFixedSize(QSize(400, 200))
+        label.setScaledContents(True)
+        movie.start()                    # 启动图片，实现等待gif图片的显示
+        self.loading_label = label
+        self.loading_movie = movie
+
+    # 停止加载提示框
+    def stop_loading(self):
+        self.loading_movie.stop()
+        self.layout.removeWidget(self.loading_label)
+        self.loading_label.deleteLater()
+
 
 def get_now_time():
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -150,5 +175,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     w = MyWindow()
     w.show()
-    app.exec()
+    # app.exec()
+    sys.exit(app.exec_())  # 除非退出程序关闭窗体，否则一直运行
     # haixue.login('CD15714', '@qp88888888')

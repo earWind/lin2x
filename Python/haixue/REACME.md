@@ -1,3 +1,6 @@
+# 阿里镜像
+`pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/`
+
 # pyqt5打包成exe，程序有图标，但是双击打开的窗口左上角没有显示小图标
 
 打包命令后,exe程序有图标,双击打开没有图标,解决方法:
@@ -59,8 +62,8 @@ C:\Users\Administrator\AppData\Local\Programs\Python\Python39\Lib\site-packages 
 
 然后执行 `pyinstaller main.spec`
 
-
 # webdriver.Chrome 报错
+
 python安装目录 print(sys.executable)
 [driver = webdriver.Chrome()报错](https://blog.csdn.net/weixin_42403127/article/details/85255891)
 [最新ChromeDriver下载](https://googlechromelabs.github.io/chrome-for-testing/)

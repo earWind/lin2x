@@ -54,6 +54,7 @@ def get_captcha():  # 获取验证码
                 "__jsluid_h": cookie['__jsluid_s'],
                 "captcha-uuid": cookie['captcha-uuid']
             }
+            print('get code success', _cookie)
             return [captcha, _cookie]
 
             # with open('D:\_git\lin2x\Python\demo\captcha.jpg', 'rb') as f:
@@ -62,6 +63,7 @@ def get_captcha():  # 获取验证码
             #     print(captcha)
             # return captcha, {"__jsluid_h": cookie['__jsluid_s'],"captcha-uuid": cookie['captcha-uuid']}
     except:
+        print('get code error')
         return 'error'
 
 
@@ -85,6 +87,8 @@ def login(user_name, pass_word):  # 登录
         "systemCode": "crm",
         "verifyCode": captcha
     }
+
+    print(data)
 
     # cookies
     """
@@ -125,10 +129,9 @@ def login(user_name, pass_word):  # 登录
         # 保存用户信息
         global gl_user_info  # 声明是全局变量
         gl_user_info = json.loads(r.text)['data']
-
-        # print(gl_user_info)
-
         userInfo = gl_user_info['userInfo']
+        print('user info', userInfo)
+
         default_cookies = {
             'security_cookie_user': str(userInfo['id']),
             'afa6f4b5a41e143f_gr_last_sent_cs1': userInfo['userName'],
@@ -357,7 +360,7 @@ def update_quote(cookies, row):  # 修改报价
 
 
 if __name__ == '__main__':
-    r = login('CD15714', '@qp88888888')
+    r = login('CD15714', '@qp888888')
     print(r)
     # print(gl_user_info)
     # print(get_haixue_web())
